@@ -1,0 +1,7 @@
+.idea
+.vscode
+
+tmp/
+*.egg-info/
+.DS_Store
+.cache

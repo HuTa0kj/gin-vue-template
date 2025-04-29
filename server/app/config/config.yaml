@@ -1,0 +1,19 @@
+Server:
+  Port: 8080 # 服务器端口
+  Route:
+    Prefix: "/api" # 路由前缀
+  TrustedProxies:  # 信任的代理 IP
+    - 127.0.0.1
+  Log:
+    Debug: true # 是否记录 DEBUG 级别日志
+    SaveFile: true # 日志保存为文件
+Db:
+  Mysql:
+    Host: mysql # mysql 127.0.0.1
+    Port: 3306
+    User: root
+    Password: root
+    Database: app
+Auth:
+  JwtKey: jwt_key # JWT 密钥
+  EffectiveHours: 2 # JWT 有效时间 2 小时
