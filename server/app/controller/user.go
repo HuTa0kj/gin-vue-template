@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"gintemplate/app/services"
 	"net/http"
 
 	"gintemplate/app/global"
@@ -8,21 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 获取用户信息
+// Get User Info
 func GetCurrentUserInfo(c *gin.Context) {
-	userName, NameExists := c.Get("username")
-	userUid, uidExists := c.Get("userUid")
-	if !NameExists || !uidExists {
+	userInfo, ok := services.GetUserInfo(c)
+	if !ok {
 		c.JSON(
-			http.StatusUnauthorized,
+			http.StatusInternalServerError,
 			resp.UserInfoResp{
-				Code:     global.CodeUnauthorized,
-				Msg:      global.CodeUnauthorizedMsg,
+				Code:     global.CodeInformationNotFound,
+				Msg:      global.CodeInformationNotFoundMsg,
 				Status:   "error",
 				UserName: "",
-				UserUid:  "",
 			})
-		return
 	}
 	c.JSON(
 		http.StatusOK,
@@ -30,8 +28,9 @@ func GetCurrentUserInfo(c *gin.Context) {
 			Code:     global.CodeSuccess,
 			Msg:      global.CodeSuccessMsg,
 			Status:   "ok",
-			UserName: userName.(string),
-			UserUid:  userUid.(string),
+			UserName: userInfo.UserName,
+			UserID:   userInfo.ID,
+			UserRole: userInfo.Role,
 		})
 	return
 }

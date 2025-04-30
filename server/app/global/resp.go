@@ -10,7 +10,7 @@ const (
 	CodeParameterMissingMsg = "Parameter missing"
 
 	// 认证错误 (4)
-	CodeUnauthorized          = 4001 // 权限不足
+	CodeUnauthorized          = 4001 // 未授权
 	CodeUnauthorizedMsg       = "Unauthorized"
 	CodeTokenInvalid          = 4002 // Token 无效
 	CodeTokenInvalidMsg       = "Token invalid"
@@ -22,5 +22,6 @@ const (
 	CodeLoginFailMsg          = "Login failed"
 
 	// 业务错误 (5)
-	
+	CodeInformationNotFound    = 5001 // 信息不存在
+	CodeInformationNotFoundMsg = "Information not found"
 )

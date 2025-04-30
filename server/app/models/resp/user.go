@@ -5,5 +5,6 @@ type UserInfoResp struct {
 	Msg      string `json:"msg"`
 	Status   string `json:"status"` // ok error
 	UserName string `json:"username"`
-	UserUid  string `json:"uid"`
+	UserID   int    `json:"id"`
+	UserRole int    `json:"role"`
 }

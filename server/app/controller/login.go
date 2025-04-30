@@ -22,9 +22,9 @@ func LoginCheck(c *gin.Context) {
 		return
 	}
 
-	token, statusCode, err := services.Login(loginJson.Username, loginJson.Password) // 具体验证逻辑
+	token, err := services.Login(loginJson.Username, loginJson.Password) // 具体验证逻辑
 	if err != nil {
-		c.JSON(statusCode, resp.LoginResp{
+		c.JSON(http.StatusUnauthorized, resp.LoginResp{
 			Code:   global.CodeLoginFail,
 			Msg:    global.CodeLoginFailMsg,
 			Token:  "",
@@ -34,7 +34,7 @@ func LoginCheck(c *gin.Context) {
 	}
 	logger.LogRus.Infof("用户 %s 登录成功", loginJson.Username)
 	c.SetCookie("token", token, 3600, "/", "", false, true)
-	c.JSON(statusCode, resp.LoginResp{
+	c.JSON(http.StatusOK, resp.LoginResp{
 		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Token:  token,

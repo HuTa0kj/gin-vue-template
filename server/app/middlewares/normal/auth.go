@@ -1,13 +1,15 @@
-package auth
+package normal
 
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
 	"gintemplate/app/global"
 	"gintemplate/app/models/resp"
+	"gintemplate/app/services"
 	"gintemplate/app/utils"
 )
 
@@ -57,7 +59,7 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 
 	intUserID := int(userID)
 	intUserRole := int(userRole)
-	
+
 	if intUserRole < minRole {
 		c.JSON(http.StatusUnauthorized, resp.AuthResp{
 			Code:   global.CodeUnauthorized,
@@ -90,5 +92,51 @@ func AdminAuth() gin.HandlerFunc {
 func RootAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		baseAuthHelper(c, global.RoleRootUser)
+	}
+}
+
+func apiKeyAuthHelper(c *gin.Context, minRole int) {
+	tokenString := c.Request.Header.Get("Authorization")
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+	r, ok := services.ResolveUserKey(tokenString)
+	if !ok {
+		c.JSON(
+			http.StatusUnauthorized,
+			resp.AuthResp{
+				Code:   global.CodeUnauthorized,
+				Msg:    global.CodeUnauthorizedMsg,
+				Status: "error",
+			})
+		c.Abort()
+		return
+	}
+	if r < minRole {
+		c.JSON(http.StatusUnauthorized, resp.AuthResp{
+			Code:   global.CodeUnauthorized,
+			Msg:    global.CodeUnauthorizedMsg,
+			Status: "error",
+		})
+		c.Abort()
+		return
+	}
+	c.Set("api_key", tokenString)
+	c.Next()
+}
+
+func UserKeyAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		apiKeyAuthHelper(c, global.RoleCommonUser)
+	}
+}
+
+func AdminKeyAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		apiKeyAuthHelper(c, global.RoleAdminUser)
+	}
+}
+
+func RootKeyAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		apiKeyAuthHelper(c, global.RoleRootUser)
 	}
 }
