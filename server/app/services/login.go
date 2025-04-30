@@ -2,14 +2,14 @@ package services
 
 import (
 	"fmt"
-	"gintemplate/app/global"
-	"gintemplate/app/models/sys"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 
 	"gintemplate/app/database"
+	"gintemplate/app/global"
 	"gintemplate/app/logger"
+	"gintemplate/app/models/db"
 	"gintemplate/app/utils"
 )
 
@@ -17,7 +17,7 @@ func Login(username, password string) (string, int, error) {
 	if username == "" || password == "" {
 		return "", http.StatusBadRequest, fmt.Errorf(global.CodeParameterMissingMsg)
 	}
-	var user sys.User
+	var user db.User
 
 	// 从数据库查询用户
 	err := database.DB.Where("username = ?", username).First(&user).Error
