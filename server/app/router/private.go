@@ -18,4 +18,9 @@ func PrivateRouteGroup(c *gin.Engine) {
 	{
 		userGroup.GET("/token", controller.GetUserToken)
 	}
+
+	adminGroup := privateGroup.Group("/admin")
+	adminGroup.Use(normal.AdminAuth())
+	// Invite User
+	adminGroup.POST("/user/invite", controller.InviteUser)
 }

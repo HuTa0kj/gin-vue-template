@@ -24,5 +24,16 @@ const (
 	CodeTokenExpiredMsg       = "Token expired"
 
 	// 业务错误 (5)
+	CodeDuplicateUsername    = 5001
+	CodeDuplicateUsernameMsg = "Username already exists"
+	CodeInviteCodeInvalid    = 5002
+	CodeInviteCodeInvalidMsg = "Invite code invalid"
+	CodeInviteRoleError      = 5003
+	CodeInviteRoleErrorMsg   = "Invite role error"
 
+	// 数据库错误（6）
+	CodeDatabaseInsertError    = 6001
+	CodeDatabaseInsertErrorMsg = "Database insert error"
+	CodeDatabaseUpdateError    = 6002
+	CodeDatabaseUpdateErrorMsg = "Database update error"
 )

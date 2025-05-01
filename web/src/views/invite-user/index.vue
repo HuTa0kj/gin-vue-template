@@ -23,6 +23,13 @@
           />
         </el-form-item>
 
+        <el-form-item label="用户权限" prop="role">
+          <el-select v-model="formData.role" placeholder="请选择用户权限">
+            <el-option :value="1" label="普通用户" />
+            <el-option :value="10" label="管理员" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="邀请链接" v-if="inviteLink">
           <el-input
             v-model="inviteLink"
@@ -50,11 +57,13 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 interface InviteForm {
   username: string
+  role: number
 }
 
 const formRef = ref<FormInstance>()
 const formData = ref<InviteForm>({
-  username: ''
+  username: '',
+  role: 1  // 默认为普通用户
 })
 const inviteLink = ref('')
 
@@ -62,6 +71,9 @@ const rules = ref<FormRules>({
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 3, max: 20, message: '用户名长度应在3-20个字符之间', trigger: 'blur' }
+  ],
+  role: [
+    { required: true, message: '请选择用户权限', trigger: 'change' }
   ]
 })
 
@@ -72,7 +84,7 @@ const handleGenerate = async () => {
   await formRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        const response = await fetch('/api/user/invite', {
+        const response = await fetch('/api/admin/user/invite', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -80,8 +92,8 @@ const handleGenerate = async () => {
           body: JSON.stringify(formData.value)
         })
         const data = await response.json()
-        if (data.code === 0) {
-          inviteLink.value = data.invite_link
+        if (data.code === 2000 && data.status === 'ok') {
+          inviteLink.value = data.link
           ElMessage.success(data.msg || '邀请链接生成成功')
         } else {
           ElMessage.error(data.message || '生成邀请链接失败')

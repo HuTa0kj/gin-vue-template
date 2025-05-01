@@ -42,6 +42,7 @@ type Route struct {
 
 // Server
 type Server struct {
+	BaseUrl        string
 	Log            Log
 	Route          Route
 	Port           int

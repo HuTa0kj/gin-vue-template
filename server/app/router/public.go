@@ -8,9 +8,12 @@ import (
 
 func PublicRouteGroup(c *gin.Engine) {
 	publicGroup := c.Group(global.RoutePrefix)
+
 	loginGroup := publicGroup.Group("/login")
 	{
 		loginGroup.POST("verify", controller.LoginCheck)
 	}
+	
+	publicGroup.POST("/user/invite/check", controller.InviteUserCheck)
 
 }

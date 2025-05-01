@@ -1,5 +1,6 @@
 Server:
-  Port: 8080 # 服务器端口
+  BaseUrl: http://127.0.0.1:3900 # 服务器基础 URL
+  Port: 8080
   Route:
     Prefix: "/api" # 路由前缀
   TrustedProxies:  # 信任的代理 IP
