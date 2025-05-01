@@ -1,12 +1,13 @@
 package controller
 
 import (
-	"gintemplate/app/services"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 
 	"gintemplate/app/global"
 	"gintemplate/app/models/resp"
-	"github.com/gin-gonic/gin"
+	"gintemplate/app/services"
 )
 
 // Get User Info
@@ -14,7 +15,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 	userInfo, ok := services.GetUserInfo(c)
 	if !ok {
 		c.JSON(
-			http.StatusInternalServerError,
+			http.StatusNotFound,
 			resp.UserInfoResp{
 				Code:     global.CodeInformationNotFound,
 				Msg:      global.CodeInformationNotFoundMsg,

@@ -1,9 +1,10 @@
 package services
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"gintemplate/app/database"
 	"gintemplate/app/models/db"
-	"github.com/gin-gonic/gin"
 )
 
 // Select User Info

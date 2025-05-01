@@ -1,10 +1,11 @@
 package router
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"gintemplate/app/controller"
 	"gintemplate/app/global"
 	"gintemplate/app/middlewares/normal"
-	"github.com/gin-gonic/gin"
 )
 
 func ApiRouteGroup(c *gin.Engine) {

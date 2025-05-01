@@ -2,13 +2,14 @@ package services
 
 import (
 	"fmt"
-	"gintemplate/app/utils"
+
 	"golang.org/x/crypto/bcrypt"
 
 	"gintemplate/app/database"
 	"gintemplate/app/global"
 	"gintemplate/app/logger"
 	"gintemplate/app/models/db"
+	"gintemplate/app/utils"
 )
 
 func Login(username, password string) (string, error) {
