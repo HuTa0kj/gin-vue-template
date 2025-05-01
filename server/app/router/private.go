@@ -13,5 +13,5 @@ func PrivateRouteGroup(c *gin.Engine) {
 	privateGroup.Use(normal.UserAuth())
 
 	privateGroup.GET("/login/status", controller.CheckLoginStatus)
-
+	privateGroup.GET("/logout", controller.Logout)
 }

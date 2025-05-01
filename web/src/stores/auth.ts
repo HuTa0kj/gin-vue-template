@@ -35,9 +35,11 @@ export const useAuthStore = defineStore('auth', {
 
     async clearSession() {
       try {
-        await axios.get('/api/login/logout', {
+        // 先调用后端登出接口
+        await axios.get('/api/logout', {}, {
           withCredentials: true
         })
+        // 再清除前端状态
         await this.setAuthenticated(false)
         return true
       } catch (error) {
