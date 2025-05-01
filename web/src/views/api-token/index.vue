@@ -43,13 +43,12 @@ const fetchToken = async () => {
   try {
     const response = await fetch('/api/user/token')
     if (response.ok) {
-      const { code, data, msg } = await response.json()
-      if (code === 0) {
+      const data = await response.json()  
+      if (data.code === 2000 && data.status === "ok") {
         token.value = data.token
         username.value = data.username
-        // ElMessage.success(msg)
       } else {
-        ElMessage.error(msg || '获取Token失败')
+        ElMessage.error(data.msg || '获取Token失败')
       }
     }
   } catch (error) {

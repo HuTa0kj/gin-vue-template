@@ -71,7 +71,7 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 	}
 
 	c.Set("username", userName)
-	c.Set("userID", intUserID)
+	c.Set("user_id", intUserID)
 	c.Set("role", intUserRole)
 
 	c.Next()

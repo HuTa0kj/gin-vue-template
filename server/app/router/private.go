@@ -14,4 +14,8 @@ func PrivateRouteGroup(c *gin.Engine) {
 
 	privateGroup.GET("/login/status", controller.CheckLoginStatus)
 	privateGroup.GET("/logout", controller.Logout)
+	userGroup := privateGroup.Group("/user")
+	{
+		userGroup.GET("/token", controller.GetUserToken)
+	}
 }

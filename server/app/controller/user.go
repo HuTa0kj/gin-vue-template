@@ -12,7 +12,7 @@ import (
 
 // Get User Info
 func GetCurrentUserInfo(c *gin.Context) {
-	userInfo, ok := services.GetUserInfo(c)
+	userInfo, ok := services.GetKeyUserInfo(c)
 	if !ok {
 		c.JSON(
 			http.StatusNotFound,
@@ -32,6 +32,30 @@ func GetCurrentUserInfo(c *gin.Context) {
 			UserName: userInfo.UserName,
 			UserID:   userInfo.ID,
 			UserRole: userInfo.Role,
+		})
+	return
+}
+
+func GetUserToken(c *gin.Context) {
+	userInfo, ok := services.GetUserInfo(c)
+	if !ok {
+		c.JSON(
+			http.StatusNotFound,
+			resp.UserInfoResp{
+				Code:     global.CodeInformationNotFound,
+				Msg:      global.CodeInformationNotFoundMsg,
+				Status:   "error",
+				UserName: "",
+			})
+	}
+	c.JSON(
+		http.StatusOK,
+		resp.UserTokenResp{
+			Code:     global.CodeSuccess,
+			Msg:      global.CodeSuccessMsg,
+			Status:   "ok",
+			UserName: userInfo.UserName,
+			Token:    userInfo.ApiKey,
 		})
 	return
 }

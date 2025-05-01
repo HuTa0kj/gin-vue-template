@@ -1,13 +1,15 @@
 package controller
 
 import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
 	"gintemplate/app/global"
 	"gintemplate/app/logger"
 	"gintemplate/app/models/req"
 	"gintemplate/app/models/resp"
 	"gintemplate/app/services"
-	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func LoginCheck(c *gin.Context) {
