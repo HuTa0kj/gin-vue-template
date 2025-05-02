@@ -34,7 +34,12 @@ func Login(username, password string) (string, error) {
 	userName := user.GetUserName()
 	userRole := user.GetRole()
 	userID := user.GetID()
-	token, err := utils.GenerateJWT(userName, userID, userRole)
+	userStatus := user.GetStatus()
+	if !userStatus {
+		logger.LogRus.Error("User is disabled: %s", userName)
+		return "", fmt.Errorf(global.CodeUserDisableMsg)
+	}
+	token, err := utils.GenerateJWT(userName, userID, userRole, userStatus)
 	if err != nil {
 		logger.LogRus.Error("Failed to generate JWT Token: %s", err)
 		return "", fmt.Errorf("Failed to generate JWT Token")

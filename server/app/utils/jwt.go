@@ -7,11 +7,12 @@ import (
 	"time"
 )
 
-func GenerateJWT(username string, userId int, userRole int) (string, error) {
+func GenerateJWT(username string, userId int, userRole int, userStatus bool) (string, error) {
 	claims := jwt.MapClaims{
 		"username": username,
 		"id":       userId,
 		"role":     userRole,
+		"status":   userStatus,
 		"sub":      "auth",
 		"exp":      time.Now().UTC().Add(time.Hour * global.EffectiveHours).Unix(), // 设置 token 的过期时间
 	}

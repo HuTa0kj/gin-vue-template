@@ -3,7 +3,7 @@
     <!-- 顶部导航栏 -->
     <el-header class="header">
       <div class="header-left">
-        <h2>监控系统</h2>
+        <h2>管理面板</h2>
       </div>
       <div class="header-right">
         <el-dropdown @command="handleCommand">
@@ -34,6 +34,10 @@
           <el-menu-item index="/api-token">
             <el-icon><Key /></el-icon>
             <span>API Token管理</span>
+          </el-menu-item>
+          <el-menu-item index="/user-management" v-if="authStore.userRole >= 100">
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
           </el-menu-item>
           <el-menu-item index="/invite-user" v-if="authStore.userRole >= 10">
             <el-icon><UserFilled /></el-icon>
@@ -124,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { Document, Monitor, Setting, Key, UserFilled,  Warning, Timer } from '@element-plus/icons-vue'
+import { Document, Monitor, Setting, Key, User, UserFilled,  Warning, Timer } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ref, onMounted } from 'vue'
@@ -138,62 +142,12 @@ const todayLogs = ref(0)
 const unverifiedVuls = ref(0)
 const pendingVuls = ref(0)
 
-const fetchTotalLogs = async () => {
-  try {
-    const response = await axios.get('/api/log/statistics/all')
-    if (response.data.code === 0) {
-      totalLogs.value = response.data.data
-    }
-  } catch (error) {
-    console.error('获取总日志数失败:', error)
-  }
-}
-
-const fetchTodayLogs = async () => {
-  try {
-    const response = await axios.get('/api/log/statistics/today')
-    if (response.data.code === 0) {
-      todayLogs.value = response.data.data
-    }
-  } catch (error) {
-    console.error('获取今日新增日志数失败:', error)
-  }
-}
-
-const fetchUnverifiedVuls = async () => {
-  try {
-    const response = await axios.get('/api/log/statistics/unverified')
-    if (response.data.code === 0) {
-      unverifiedVuls.value = response.data.data
-    }
-  } catch (error) {
-    console.error('获取待验证漏洞数失败:', error)
-  }
-}
-
-const fetchSuspectedVuls = async () => {
-  try {
-    const response = await axios.get('/api/log/statistics/suspected')
-    if (response.data.code === 0) {
-      pendingVuls.value = response.data.data
-    }
-  } catch (error) {
-    console.error('获取疑似漏洞数失败:', error)
-  }
-}
-
-onMounted(() => {
-  fetchTotalLogs()
-  fetchTodayLogs()
-  fetchUnverifiedVuls()
-  fetchSuspectedVuls()
-})
 
 const handleCommand = async (command: string) => {
   if (command === 'logout') {
     await handleLogout()
   } else if (command === 'settings') {
-    // TODO: 处理个人设置
+    router.push('/person')  // 修改这里，跳转到个人信息页面
   }
 }
 

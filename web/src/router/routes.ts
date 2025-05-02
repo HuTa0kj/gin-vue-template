@@ -51,7 +51,15 @@ const routes: RouteRecordRaw[] = [
           requiresAdmin: true,
         },
       },
-
+      {
+        path: '/person',
+        name: 'Person',
+        component: () => import('@/views/person/index.vue'),
+        meta: {
+          title: '个人主页',
+          requiresAuth: true,
+        },
+      },
       {
         path: '/settings',
         name: 'Settings',
@@ -60,6 +68,16 @@ const routes: RouteRecordRaw[] = [
           title: '系统设置',
           requiresAuth: true,
           requiresAdmin: true,
+        },
+      },
+      {
+        path: '/user-management',
+        name: 'UserManagement',
+        component: () => import('@/views/user-management/index.vue'),
+        meta: {
+          title: '用户管理',
+          requiresAuth: true,
+          requiresSuperAdmin: true,
         },
       },
     ],

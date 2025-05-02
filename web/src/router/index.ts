@@ -15,23 +15,18 @@ const router = createRouter({
   },
 })
 
-router.beforeEach(async (to, from, next) => {
-  progress.start()
+router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   
-  if (to.meta.requiresAuth) {
-    await authStore.setAuthenticated(true)
-    if (!authStore.checkAuth()) {
-      next({ name: 'Login' })
-      return
-    }
-
-    if (to.meta.requiresAdmin && authStore.userRole < 10) {
-      next({ name: 'Dashboard' })
-      return
-    }
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login')
+  } else if (to.meta.requiresAdmin && authStore.userRole < 10) {
+    next('/dashboard')
+  } else if (to.meta.requiresSuperAdmin && authStore.userRole < 100) {
+    next('/dashboard')
+  } else {
+    next()
   }
-  next()
 })
 
 router.afterEach((to) => {

@@ -44,6 +44,7 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 	userName, uok := claims["username"].(string)
 	userID, iok := claims["id"].(float64)
 	userRole, rok := claims["role"].(float64)
+	userStatus, _ := claims["status"].(bool)
 	fmt.Println(userName, userID, userRole)
 	if !uok || !rok || !iok {
 		c.JSON(
@@ -64,6 +65,15 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 		c.JSON(http.StatusUnauthorized, resp.AuthResp{
 			Code:   global.CodeUnauthorized,
 			Msg:    global.CodeUnauthorizedMsg,
+			Status: "error",
+		})
+		c.Abort()
+		return
+	}
+	if !userStatus {
+		c.JSON(http.StatusUnauthorized, resp.AuthResp{
+			Code:   global.CodeUserDisable,
+			Msg:    global.CodeUserDisableMsg,
 			Status: "error",
 		})
 		c.Abort()

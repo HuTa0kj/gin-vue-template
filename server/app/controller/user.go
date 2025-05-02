@@ -6,12 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"gintemplate/app/global"
+	"gintemplate/app/models/req"
 	"gintemplate/app/models/resp"
 	"gintemplate/app/services"
 )
 
 // Get User Info
-func GetCurrentUserInfo(c *gin.Context) {
+func GetUserInfoFromKey(c *gin.Context) {
 	userInfo, ok := services.GetKeyUserInfo(c)
 	if !ok {
 		c.JSON(
@@ -22,6 +23,33 @@ func GetCurrentUserInfo(c *gin.Context) {
 				Status:   "error",
 				UserName: "",
 			})
+		return
+	}
+	c.JSON(
+		http.StatusOK,
+		resp.UserInfoResp{
+			Code:     global.CodeSuccess,
+			Msg:      global.CodeSuccessMsg,
+			Status:   "ok",
+			UserName: userInfo.UserName,
+			UserID:   userInfo.ID,
+			UserRole: userInfo.Role,
+		})
+	return
+}
+
+func GetUserInfoFromCookie(c *gin.Context) {
+	userInfo, ok := services.GetCurrentUserInfo(c)
+	if !ok {
+		c.JSON(
+			http.StatusNotFound,
+			resp.UserInfoResp{
+				Code:     global.CodeInformationNotFound,
+				Msg:      global.CodeInformationNotFoundMsg,
+				Status:   "error",
+				UserName: "",
+			})
+		return
 	}
 	c.JSON(
 		http.StatusOK,
@@ -37,7 +65,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 }
 
 func GetUserToken(c *gin.Context) {
-	userInfo, ok := services.GetUserInfo(c)
+	userInfo, ok := services.GetCurrentUserInfo(c)
 	if !ok {
 		c.JSON(
 			http.StatusNotFound,
@@ -47,6 +75,7 @@ func GetUserToken(c *gin.Context) {
 				Status:   "error",
 				UserName: "",
 			})
+		return
 	}
 	c.JSON(
 		http.StatusOK,
@@ -57,5 +86,75 @@ func GetUserToken(c *gin.Context) {
 			UserName: userInfo.UserName,
 			Token:    userInfo.ApiKey,
 		})
+	return
+}
+
+// Update user password
+func UpdatePassword(c *gin.Context) {
+	var ur req.UpdatePasswordReq
+	if len(ur.NewPassword) < 6 {
+		c.JSON(http.StatusBadRequest, resp.UpdatePasswordResp{
+			Code:   global.CodeParameterIllegal,
+			Msg:    global.CodeParameterIllegalMsg,
+			Status: "error",
+		})
+		return
+	}
+	if err := c.ShouldBindJSON(&ur); err != nil {
+		c.JSON(http.StatusBadRequest, resp.UpdatePasswordResp{
+			Code:   global.CodeParameterMissing,
+			Msg:    global.CodeParameterMissingMsg,
+			Status: "error",
+		})
+		return
+	}
+	if err := services.ModifyUserPassword(c, ur.OldPassword, ur.NewPassword); err != nil {
+		c.JSON(http.StatusBadRequest, resp.UpdatePasswordResp{
+			Code:   global.CodeDatabaseUpdateError,
+			Msg:    err.Error(),
+			Status: "error",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, resp.UpdatePasswordResp{
+		Code:   global.CodeSuccess,
+		Msg:    global.CodeSuccessMsg,
+		Status: "ok",
+	})
+	return
+}
+
+func GetAllUserInfo(c *gin.Context) {
+	var aur req.AllUserReq
+
+	if err := c.ShouldBind(&aur); err != nil {
+		c.JSON(http.StatusBadRequest, resp.AllUserResp{
+			Code:   global.CodeParameterIllegal,
+			Msg:    global.CodeParameterIllegalMsg,
+			Status: "error",
+			Users:  []resp.SimpleUser{},
+			Total:  0,
+		})
+		return
+	}
+	aur.SetDefaults()
+	users, total, err := services.SelectAllUserInfo(aur.Page, aur.PageSize)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, resp.AllUserResp{
+			Code:   global.CodeParameterIllegal,
+			Msg:    global.CodeParameterIllegalMsg,
+			Status: "error",
+			Users:  []resp.SimpleUser{},
+			Total:  0,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, resp.AllUserResp{
+		Code:   global.CodeSuccess,
+		Msg:    global.CodeSuccessMsg,
+		Status: "ok",
+		Users:  users,
+		Total:  total,
+	})
 	return
 }

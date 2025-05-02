@@ -28,7 +28,7 @@ func LoginCheck(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, resp.LoginResp{
 			Code:   global.CodeLoginFail,
-			Msg:    global.CodeLoginFailMsg,
+			Msg:    err.Error(),
 			Token:  "",
 			Status: "error",
 		})

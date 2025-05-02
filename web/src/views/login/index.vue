@@ -100,9 +100,12 @@ const handleSubmit = async () => {
         } else {
           ElMessage.error(response.data.msg || '登录失败')
         }
-      } catch (error) {
-        console.error('Login failed:', error)
-        ElMessage.error('用户名或密码错误')
+      } catch (error: any) {
+        if (error.response?.data?.msg) {
+          ElMessage.error(error.response.data.msg)
+        } else {
+          ElMessage.error('用户名或密码错误')
+        }
       } finally {
         loading.value = false
       }

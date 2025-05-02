@@ -121,7 +121,7 @@ const handleSubmit = async () => {
     if (error.message) {
       ElMessage.error(error.message)
     } else {
-      ElMessage.error('网络请求失败')
+      ElMessage.error('请求失败')
     }
   } finally {
     loading.value = false
