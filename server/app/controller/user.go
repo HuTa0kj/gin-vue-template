@@ -48,6 +48,7 @@ func GetUserInfoFromCookie(c *gin.Context) {
 				Msg:      global.CodeInformationNotFoundMsg,
 				Status:   "error",
 				UserName: "",
+				UserRole: 0,
 			})
 		return
 	}
@@ -127,7 +128,7 @@ func UpdatePassword(c *gin.Context) {
 func GetAllUserInfo(c *gin.Context) {
 	var aur req.AllUserReq
 
-	if err := c.ShouldBind(&aur); err != nil {
+	if err := c.ShouldBindQuery(&aur); err != nil {
 		c.JSON(http.StatusBadRequest, resp.AllUserResp{
 			Code:   global.CodeParameterIllegal,
 			Msg:    global.CodeParameterIllegalMsg,

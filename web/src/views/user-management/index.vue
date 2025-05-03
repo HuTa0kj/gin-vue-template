@@ -54,6 +54,17 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 分页 -->
+      <el-pagination
+        v-model:current-page="searchForm.page"
+        v-model:page-size="searchForm.page_size"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @current-change="handlePageChange"
+        @size-change="handleSizeChange"
+      />
     </el-card>
   </div>
 </template>
@@ -72,8 +83,35 @@ interface UserInfo {
 }
 
 const searchForm = reactive({
-  username: ''
+  username: '',
+  page: 1,
+  page_size: 10
 })
+
+const total = ref(0)
+
+const fetchAllUsers = async () => {
+  try {
+    const url = `/api/root/user/all?page=${searchForm.page}&page_size=${searchForm.page_size}`
+    const response = await fetch(url)
+    const data = await response.json()
+    if (data.code === 2000 && data.status === 'ok') {
+      userList.value = data.users.map(user => ({
+        id: user.id,
+        username: user.username,
+        role: Number(user.role),
+        createTime: user.register_time,
+        lastLoginTime: user.last_login_time,
+        status: user.status
+      }))
+      total.value = data.total
+    } else {
+      ElMessage.error(data.msg || '获取用户列表失败')
+    }
+  } catch (error) {
+    ElMessage.error('获取用户列表失败')
+  }
+}
 
 const userList = ref<UserInfo[]>([])
 
@@ -100,7 +138,6 @@ const handleSearch = async () => {
 
 const handleReset = () => {
   searchForm.username = ''
-  userList.value = []
 }
 
 const handleResetPassword = async (user: UserInfo) => {
@@ -152,27 +189,6 @@ const handleChangeRole = async (user: UserInfo) => {
   }
 }
 
-const fetchAllUsers = async () => {
-  try {
-    const response = await fetch('/api/root/user/all')
-    const data = await response.json()
-    if (data.code === 2000 && data.status === 'ok') {
-      userList.value = data.users.map(user => ({
-        id: user.id,
-        username: user.username,
-        role: Number(user.role),
-        createTime: user.register_time, // 直接使用原始字符串
-        lastLoginTime: user.last_login_time, // 直接使用原始字符串
-        status: user.status
-      }))
-    } else {
-      ElMessage.error(data.msg || '获取用户列表失败')
-    }
-  } catch (error) {
-    ElMessage.error('获取用户列表失败')
-  }
-}
-
 onMounted(() => {
   fetchAllUsers()
 })
@@ -196,5 +212,32 @@ onMounted(() => {
 
 .search-area {
   margin-bottom: 20px;
+}
+
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+:deep(.el-pagination) {
+  padding: 10px 0;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+:deep(.el-pagination .btn-prev),
+:deep(.el-pagination .btn-next) {
+  padding: 0 8px;
+}
+
+:deep(.el-pagination .el-pager li) {
+  margin: 0 4px;
+  border-radius: 4px;
+}
+
+:deep(.el-pagination .el-pager li.active) {
+  background-color: var(--el-color-primary);
+  color: #fff;
 }
 </style>
