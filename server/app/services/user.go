@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"gintemplate/app/logger"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -73,10 +74,14 @@ func SelectAllUserInfo(page, pageSize int) ([]resp.SimpleUser, int64, error) {
 
 	if err := database.DB.
 		Model(&db.User{}).
-		Select("id, username, role, status").
+		Select("id, username, role, " +
+			"DATE_FORMAT(register_time, '%Y-%m-%d %H:%i:%s') as register_time, " +
+			"DATE_FORMAT(last_login_time, '%Y-%m-%d %H:%i:%s') as last_login_time, " +
+			"status").
 		Offset(offset).
 		Limit(pageSize).
 		Find(&users).Error; err != nil {
+		logger.LogRus.Error(err.Error())
 		return nil, 0, err
 	}
 

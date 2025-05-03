@@ -155,6 +155,8 @@ const handleLogout = async () => {
   const success = await authStore.clearSession()
   if (success) {
     router.push('/login')
+  }else {
+    router.push('/login')
   }
 }
 </script>

@@ -15,17 +15,25 @@ const router = createRouter({
   },
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  try {
+    // 强制刷新认证状态
+    await authStore.checkAuth()
+    
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+      next('/login')
+    } else if (to.meta.requiresAdmin && authStore.userRole < 10) {
+      next('/dashboard')
+    } else if (to.meta.requiresSuperAdmin && authStore.userRole < 100) {
+      next('/dashboard')
+    } else {
+      next()
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error)
     next('/login')
-  } else if (to.meta.requiresAdmin && authStore.userRole < 10) {
-    next('/dashboard')
-  } else if (to.meta.requiresSuperAdmin && authStore.userRole < 100) {
-    next('/dashboard')
-  } else {
-    next()
   }
 })
 

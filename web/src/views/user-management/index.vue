@@ -161,8 +161,8 @@ const fetchAllUsers = async () => {
         id: user.id,
         username: user.username,
         role: Number(user.role),
-        createTime: new Date(user.register_time).toLocaleString(),
-        lastLoginTime: new Date(user.last_login_time).toLocaleString(),
+        createTime: user.register_time, // 直接使用原始字符串
+        lastLoginTime: user.last_login_time, // 直接使用原始字符串
         status: user.status
       }))
     } else {

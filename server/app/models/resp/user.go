@@ -1,9 +1,5 @@
 package resp
 
-import (
-	"time"
-)
-
 type UserInfoResp struct {
 	Code     int    `json:"code"`
 	Msg      string `json:"msg"`
@@ -31,10 +27,10 @@ type AllUserResp struct {
 
 // Display User Model
 type SimpleUser struct {
-	ID            uint      `json:"id"`
-	Username      string    `json:"username"`
-	Role          string    `json:"role"`
-	RegisterTime  time.Time `json:"register_time"`
-	LastLoginTime time.Time `json:"last_login_time"`
-	Status        bool      `json:"status"`
+	ID            uint   `json:"id"`
+	Username      string `json:"username"`
+	Role          string `json:"role"`
+	RegisterTime  string `json:"register_time"`   // 改为 string
+	LastLoginTime string `json:"last_login_time"` // 改为 string
+	Status        bool   `json:"status"`
 }

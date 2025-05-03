@@ -2,6 +2,8 @@ FROM golang:1.23
 
 WORKDIR /build/src
 
+ENV TZ=Asia/Shanghai
+
 RUN go install github.com/air-verse/air@latest
 
 COPY ./go.mod go.sum ./

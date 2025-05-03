@@ -44,6 +44,7 @@ func Login(username, password string) (string, error) {
 		logger.LogRus.Error("Failed to generate JWT Token: %s", err)
 		return "", fmt.Errorf("Failed to generate JWT Token")
 	}
+	_ = database.DB.Model(&user).Update("last_login_time", utils.CurrentTime())
 
 	// 返回生成的 JWT Token
 	return token, nil

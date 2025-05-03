@@ -26,6 +26,7 @@ func LoginCheck(c *gin.Context) {
 
 	token, err := services.Login(loginJson.Username, loginJson.Password) // 具体验证逻辑
 	if err != nil {
+		logger.LogRus.Warning(err)
 		c.JSON(http.StatusUnauthorized, resp.LoginResp{
 			Code:   global.CodeLoginFail,
 			Msg:    err.Error(),
