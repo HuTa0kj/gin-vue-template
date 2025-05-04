@@ -42,4 +42,6 @@ const (
 	CodeDatabaseInsertErrorMsg = "Data insert error"
 	CodeDatabaseUpdateError    = 6002
 	CodeDatabaseUpdateErrorMsg = "Data update error"
+	CodeDatabaseSelectError    = 6003
+	CodeDatabaseSelectErrorMsg = "Data select error"
 )

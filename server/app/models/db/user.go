@@ -1,17 +1,15 @@
 package db
 
-import "time"
-
 // User 用户模型
 type User struct {
-	ID            int       `gorm:"primaryKey;column:id"`
-	UserName      string    `gorm:"size:100;not null;column:username"`
-	Password      string    `gorm:"size:100;not null;column:password"`
-	ApiKey        string    `gorm:"size:100;not null;column:api_key"`
-	Role          int       `gorm:"size:20;not null;column:role"`
-	RegisterTime  time.Time `gorm:"column:;not null;register_time"`
-	LastLoginTime time.Time `gorm:"column:last_login_time"`
-	Status        bool      `gorm:"size:20;not null;column:status"`
+	ID            int    `gorm:"primaryKey;column:id"`
+	UserName      string `gorm:"size:100;not null;column:username"`
+	Password      string `gorm:"size:100;not null;column:password"`
+	ApiKey        string `gorm:"size:100;not null;column:api_key"`
+	Role          int    `gorm:"size:20;not null;column:role"`
+	RegisterTime  string `gorm:"size:26:;not null;register_time"`
+	LastLoginTime string `gorm:"size:26:last_login_time"`
+	Status        bool   `gorm:"size:20;not null;column:status"`
 }
 
 func (u User) GetUserName() string {

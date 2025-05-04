@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: '系统设置',
           requiresAuth: true,
-          requiresAdmin: true,
+          requiresSuperAdmin: true,
         },
       },
       {

@@ -29,8 +29,21 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    checkAuth() {
-      return this.isAuthenticated
+    async checkAuth() {
+      try {
+        const response = await axios.get('/api/login/status', {
+          withCredentials: true
+        })
+        this.isAuthenticated = response.data.auth === true
+        if (response.data.code === 2000 && response.data.status === "ok") {
+          this.userRole = response.data.role
+        }
+        return this.isAuthenticated
+      } catch (error) {
+        console.error('Auth check failed:', error)
+        this.isAuthenticated = false
+        return false
+      }
     },
 
     async clearSession() {

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"gintemplate/app/models/sys"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -133,7 +134,7 @@ func GetAllUserInfo(c *gin.Context) {
 			Code:   global.CodeParameterIllegal,
 			Msg:    global.CodeParameterIllegalMsg,
 			Status: "error",
-			Users:  []resp.SimpleUser{},
+			Users:  []sys.SimpleUser{},
 			Total:  0,
 		})
 		return
@@ -145,7 +146,7 @@ func GetAllUserInfo(c *gin.Context) {
 			Code:   global.CodeParameterIllegal,
 			Msg:    global.CodeParameterIllegalMsg,
 			Status: "error",
-			Users:  []resp.SimpleUser{},
+			Users:  []sys.SimpleUser{},
 			Total:  0,
 		})
 		return
@@ -156,6 +157,36 @@ func GetAllUserInfo(c *gin.Context) {
 		Status: "ok",
 		Users:  users,
 		Total:  total,
+	})
+	return
+}
+
+func SearchUserInfo(c *gin.Context) {
+	var ur req.UserSearchReq
+	if err := c.ShouldBindJSON(&ur); err != nil {
+		c.JSON(http.StatusBadRequest, resp.SingleUserResp{
+			Code:   global.CodeParameterIllegal,
+			Msg:    global.CodeParameterIllegalMsg,
+			Status: "error",
+			User:   sys.SimpleUser{},
+		})
+		return
+	}
+	user, err := services.SearchSingleUserInfo(ur.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, resp.SingleUserResp{
+			Code:   global.CodeDatabaseSelectError,
+			Msg:    global.CodeDatabaseSelectErrorMsg,
+			Status: "error",
+			User:   user,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, resp.SingleUserResp{
+		Code:   global.CodeSuccess,
+		Msg:    global.CodeSuccessMsg,
+		Status: "ok",
+		User:   user,
 	})
 	return
 }

@@ -1,16 +1,17 @@
 package services
 
 import (
+	"errors"
 	"fmt"
-	"gintemplate/app/logger"
-
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 
 	"gintemplate/app/database"
 	"gintemplate/app/global"
+	"gintemplate/app/logger"
 	"gintemplate/app/models/db"
-	"gintemplate/app/models/resp"
+	"gintemplate/app/models/sys"
 	"gintemplate/app/utils"
 )
 
@@ -62,8 +63,8 @@ func ModifyUserPassword(c *gin.Context, op string, np string) error {
 	return nil
 }
 
-func SelectAllUserInfo(page, pageSize int) ([]resp.SimpleUser, int64, error) {
-	var users []resp.SimpleUser
+func SelectAllUserInfo(page, pageSize int) ([]sys.SimpleUser, int64, error) {
+	var users []sys.SimpleUser
 	var total int64
 
 	offset := (page - 1) * pageSize
@@ -74,10 +75,7 @@ func SelectAllUserInfo(page, pageSize int) ([]resp.SimpleUser, int64, error) {
 
 	if err := database.DB.
 		Model(&db.User{}).
-		Select("id, username, role, " +
-			"DATE_FORMAT(register_time, '%Y-%m-%d %H:%i:%s') as register_time, " +
-			"DATE_FORMAT(last_login_time, '%Y-%m-%d %H:%i:%s') as last_login_time, " +
-			"status").
+		Select("id, username, role, register_time, last_login_time, status").
 		Offset(offset).
 		Limit(pageSize).
 		Find(&users).Error; err != nil {
@@ -86,4 +84,26 @@ func SelectAllUserInfo(page, pageSize int) ([]resp.SimpleUser, int64, error) {
 	}
 
 	return users, total, nil
+}
+func SearchSingleUserInfo(username string) (sys.SimpleUser, error) {
+	var dbUser db.User
+	err := database.DB.Where("username = ?", username).First(&dbUser).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return sys.SimpleUser{}, nil // 或返回错误，如 fmt.Errorf("用户不存在")
+	}
+	if err != nil {
+		logger.LogRus.Error(err)
+		return sys.SimpleUser{}, err
+	}
+
+	// db.User → sys.SimpleUser
+	simpleUser := sys.SimpleUser{
+		ID:            uint(dbUser.ID),
+		Username:      dbUser.UserName,
+		Role:          dbUser.Role,
+		RegisterTime:  dbUser.RegisterTime,
+		LastLoginTime: dbUser.LastLoginTime,
+		Status:        dbUser.Status,
+	}
+	return simpleUser, nil
 }

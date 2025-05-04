@@ -1,5 +1,7 @@
 package resp
 
+import "gintemplate/app/models/sys"
+
 type UserInfoResp struct {
 	Code     int    `json:"code"`
 	Msg      string `json:"msg"`
@@ -18,19 +20,16 @@ type UserTokenResp struct {
 }
 
 type AllUserResp struct {
-	Code   int          `json:"code"`
-	Msg    string       `json:"msg"`
-	Users  []SimpleUser `json:"users"`
-	Status string       `json:"status"`
-	Total  int64        `json:"total"`
+	Code   int              `json:"code"`
+	Msg    string           `json:"msg"`
+	Users  []sys.SimpleUser `json:"users"`
+	Status string           `json:"status"`
+	Total  int64            `json:"total"`
 }
 
-// Display User Model
-type SimpleUser struct {
-	ID            uint   `json:"id"`
-	Username      string `json:"username"`
-	Role          string `json:"role"`
-	RegisterTime  string `json:"register_time"`   // 改为 string
-	LastLoginTime string `json:"last_login_time"` // 改为 string
-	Status        bool   `json:"status"`
+type SingleUserResp struct {
+	Code   int            `json:"code"`
+	Msg    string         `json:"msg"`
+	User   sys.SimpleUser `json:"users"`
+	Status string         `json:"status"`
 }

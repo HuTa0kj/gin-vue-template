@@ -9,12 +9,13 @@
 
       <!-- 查询区域 -->
       <div class="search-area">
-        <el-form :inline="true" :model="searchForm">
+        <el-form :inline="true" :model="searchForm" @submit.prevent>
           <el-form-item label="用户名">
             <el-input
               v-model="searchForm.username"
               placeholder="请输入用户名"
               clearable
+              @keyup.enter="handleSearch"
             />
           </el-form-item>
           <el-form-item>
@@ -92,7 +93,7 @@ const total = ref(0)
 
 const fetchAllUsers = async () => {
   try {
-    const url = `/api/root/user/all?page=${searchForm.page}&page_size=${searchForm.page_size}`
+    const url = `/api/admin/user/all?page=${searchForm.page}&page_size=${searchForm.page_size}`
     const response = await fetch(url)
     const data = await response.json()
     if (data.code === 2000 && data.status === 'ok') {
@@ -117,7 +118,7 @@ const userList = ref<UserInfo[]>([])
 
 const handleSearch = async () => {
   try {
-    const response = await fetch('/api/user/search', {
+    const response = await fetch('/api/admin/user/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -127,7 +128,23 @@ const handleSearch = async () => {
     
     const data = await response.json()
     if (data.code === 2000 && data.status === 'ok') {
-      userList.value = data.data
+      const userData = data.users
+      if (!userData.status) {
+        // 未查询到数据，显示空表格
+        userList.value = []
+        total.value = 0
+      } else {
+        // 查询到数据，显示用户信息
+        userList.value = [{
+          id: userData.id,
+          username: userData.username,
+          role: Number(userData.role),
+          createTime: userData.register_time,
+          lastLoginTime: userData.last_login_time,
+          status: userData.status
+        }]
+        total.value = 1
+      }
     } else {
       ElMessage.error(data.msg || '查询失败')
     }
@@ -136,13 +153,24 @@ const handleSearch = async () => {
   }
 }
 
+const handlePageChange = (page: number) => {
+  searchForm.page = page
+  fetchAllUsers()
+}
+
+const handleSizeChange = (size: number) => {
+  searchForm.page_size = size
+  searchForm.page = 1 // Reset to first page when changing page size
+  fetchAllUsers()
+}
+
 const handleReset = () => {
   searchForm.username = ''
 }
 
 const handleResetPassword = async (user: UserInfo) => {
   try {
-    const response = await fetch('/api/user/reset-password', {
+    const response = await fetch('/api/admin/reset/password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -13,3 +13,7 @@ func (r *AllUserReq) SetDefaults() {
 		r.PageSize = 10
 	}
 }
+
+type UserSearchReq struct {
+	Username string `json:"username"`
+}

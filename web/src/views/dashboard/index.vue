@@ -43,7 +43,7 @@
             <el-icon><UserFilled /></el-icon>
             <span>用户邀请</span>
           </el-menu-item>
-          <el-menu-item index="/settings" v-if="authStore.userRole >=10">
+          <el-menu-item index="/settings" v-if="authStore.userRole >=100">
             <el-icon><Setting /></el-icon>
             <span>系统设置</span>
           </el-menu-item>

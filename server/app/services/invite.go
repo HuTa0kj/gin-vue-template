@@ -22,10 +22,13 @@ func CreateInviteLink(u string, r int) (string, int, error) {
 	inviteKey := utils.GenerateUUIDv7()
 
 	newUser := db.User{
-		UserName: u,
-		Password: inviteKey,
-		ApiKey:   utils.GenerateUUIDv7(),
-		Role:     r,
+		UserName:      u,
+		Password:      inviteKey,
+		ApiKey:        utils.GenerateUUIDv7(),
+		Role:          r,
+		RegisterTime:  utils.CurrentTime(),
+		LastLoginTime: "",
+		Status:        true,
 	}
 	if r > 10 || r < 1 {
 		return "", global.CodeInviteRoleError, fmt.Errorf(global.CodeInviteRoleErrorMsg)

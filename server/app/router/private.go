@@ -15,23 +15,24 @@ func PrivateRouteGroup(c *gin.Engine) {
 	privateGroup.GET("/login/status", controller.CheckLoginStatus)
 	privateGroup.GET("/logout", controller.Logout)
 
-	userGroup := privateGroup.Group("/user")
+	userGroup := privateGroup.Group("user")
 	{
 		userGroup.GET("token", controller.GetUserToken)
-		userGroup.GET("/info", controller.GetUserInfoFromCookie)
+		userGroup.GET("info", controller.GetUserInfoFromCookie)
 		userGroup.POST("/password/update", controller.UpdatePassword)
 	}
 
-	adminGroup := privateGroup.Group("/admin")
+	adminGroup := privateGroup.Group("admin")
 	adminGroup.Use(normal.AdminAuth())
 	{
-		// Invite User
 		adminGroup.POST("/user/invite", controller.InviteUser)
+		adminGroup.GET("/user/all", controller.GetAllUserInfo)
+		adminGroup.POST("/user/search", controller.SearchUserInfo)
+		adminGroup.POST("/user/reset/password")
+
 	}
 
-	rootGroup := privateGroup.Group("/root")
+	rootGroup := privateGroup.Group("root")
 	rootGroup.Use(normal.RootAuth())
-	{
-		rootGroup.GET("/user/all", controller.GetAllUserInfo)
-	}
+
 }
