@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"gintemplate/app/global"
+	"gintemplate/app/logger"
 	"gintemplate/app/models/req"
 	"gintemplate/app/models/resp"
 	"gintemplate/app/services"
@@ -20,6 +21,7 @@ func InviteUser(c *gin.Context) {
 			Link:   "",
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	l, code, err := services.CreateInviteLink(inviteReq.Username, inviteReq.Role)
@@ -30,6 +32,7 @@ func InviteUser(c *gin.Context) {
 			Status: "error",
 			Link:   "",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp.InviteUserResp{
@@ -49,6 +52,7 @@ func InviteUserCheck(c *gin.Context) {
 			Msg:    global.CodeParameterMissingMsg,
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	code, err := services.UserPasswordReset(inviteCheck.Username, inviteCheck.Password, inviteCheck.InviteKey)
@@ -58,6 +62,7 @@ func InviteUserCheck(c *gin.Context) {
 			Msg:    err.Error(),
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp.InviteCheckResp{
@@ -76,6 +81,7 @@ func ResetUserCheck(c *gin.Context) {
 			Msg:    global.CodeParameterMissingMsg,
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	code, err := services.UserPasswordReset(resetCheck.Username, resetCheck.Password, resetCheck.ResetKey)
@@ -85,6 +91,7 @@ func ResetUserCheck(c *gin.Context) {
 			Msg:    err.Error(),
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp.ResetCheckResp{

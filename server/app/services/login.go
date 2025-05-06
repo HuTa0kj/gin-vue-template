@@ -18,19 +18,16 @@ func Login(username, password string) (string, error) {
 	}
 	var user db.User
 
-	// 从数据库查询用户
 	err := database.DB.Where("username = ?", username).First(&user).Error
 	if err != nil {
 		return "", fmt.Errorf(global.CodeLoginFailMsg)
 	}
 
-	// 验证密码
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		return "", fmt.Errorf(global.CodeLoginFailMsg)
 	}
 
-	// 密码正确，生成 JWT Token
 	userName := user.GetUserName()
 	userRole := user.GetRole()
 	userID := user.GetID()
@@ -45,7 +42,6 @@ func Login(username, password string) (string, error) {
 		return "", fmt.Errorf("Failed to generate JWT Token")
 	}
 	_ = database.DB.Model(&user).Update("last_login_time", utils.CurrentTime())
-
-	// 返回生成的 JWT Token
+	
 	return token, nil
 }

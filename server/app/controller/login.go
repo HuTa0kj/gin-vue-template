@@ -21,6 +21,7 @@ func LoginCheck(c *gin.Context) {
 			Token:  "",
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 
@@ -33,6 +34,7 @@ func LoginCheck(c *gin.Context) {
 			Token:  "",
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	logger.LogRus.Infof("用户 %s 登录成功", loginJson.Username)

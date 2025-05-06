@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"gintemplate/app/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"gintemplate/app/global"
+	"gintemplate/app/logger"
 	"gintemplate/app/models/req"
 	"gintemplate/app/models/resp"
 	"gintemplate/app/models/sys"
@@ -109,6 +109,7 @@ func UpdatePassword(c *gin.Context) {
 			Msg:    global.CodeParameterMissingMsg,
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	if err := services.ModifyUserPassword(c, ur.OldPassword, ur.NewPassword); err != nil {
@@ -117,6 +118,7 @@ func UpdatePassword(c *gin.Context) {
 			Msg:    err.Error(),
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp.UpdatePasswordResp{
@@ -138,6 +140,7 @@ func GetAllUserInfo(c *gin.Context) {
 			Users:  []sys.SimpleUser{},
 			Total:  0,
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	aur.SetDefaults()
@@ -150,6 +153,7 @@ func GetAllUserInfo(c *gin.Context) {
 			Users:  []sys.SimpleUser{},
 			Total:  0,
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp.AllUserResp{
@@ -171,6 +175,7 @@ func SearchUserInfo(c *gin.Context) {
 			Status: "error",
 			User:   sys.SimpleUser{},
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	user, err := services.SearchSingleUserInfo(ur.Username)
@@ -181,6 +186,7 @@ func SearchUserInfo(c *gin.Context) {
 			Status: "error",
 			User:   user,
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp.SingleUserResp{
@@ -201,6 +207,7 @@ func ResetPassword(c *gin.Context) {
 			Link:   "",
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	l, code, err := services.CreatePasswordResetLink(ur.Username)
@@ -211,6 +218,7 @@ func ResetPassword(c *gin.Context) {
 			Link:   "",
 			Status: "error",
 		})
+		logger.LogRus.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp.ResetPasswordResp{

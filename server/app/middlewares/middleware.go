@@ -8,5 +8,5 @@ import (
 
 func InitMiddleware(r *gin.Engine) {
 	// 注册全局中间件
-	r.Use(global.ReqUrlMiddleware())
+	r.Use(global.TestMiddleware())
 }
