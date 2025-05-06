@@ -17,3 +17,7 @@ func (r *AllUserReq) SetDefaults() {
 type UserSearchReq struct {
 	Username string `json:"username"`
 }
+
+type ResetPasswordReq struct {
+	Username string `json:"username"`
+}

@@ -10,3 +10,9 @@ type InviteUserRegisterReq struct {
 	Password  string `json:"password" binding:"required"`
 	InviteKey string `json:"invite_key" binding:"required"`
 }
+
+type ResetPasswordCheckReq struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	ResetKey string `json:"reset_key" binding:"required"`
+}

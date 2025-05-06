@@ -49,12 +49,75 @@
             <el-button type="primary" size="small" @click="handleResetPassword(row)">
               重置密码
             </el-button>
-            <el-button type="warning" size="small" @click="handleChangeRole(row)">
-              修改权限
+            <el-button type="primary" size="small" @click="handleEdit(row)">
+              编辑
             </el-button>
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 编辑对话框 -->
+      <el-dialog
+        v-model="dialogVisible"
+        title="编辑用户信息"
+        width="30%"
+      >
+        <el-form :model="editForm" label-width="80px">
+          <el-form-item label="用户名">
+            <span>{{ editForm.username }}</span>
+          </el-form-item>
+          <el-form-item label="用户权限">
+            <el-select v-model="editForm.role">
+              <el-option :value="10" label="管理员" />
+              <el-option :value="1" label="普通用户" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-switch
+              v-model="editForm.status"
+              :active-value="true"
+              :inactive-value="false"
+              active-text="启用"
+              inactive-text="禁用"
+            />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleSave">
+              确定
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+
+      <!-- 重置密码链接对话框 -->
+      <el-dialog
+        v-model="resetDialogVisible"
+        title="重置密码链接"
+        width="30%"
+      >
+        <div class="reset-link-container">
+          <el-input
+            v-model="resetLink"
+            readonly
+            type="text"
+            class="reset-link-input"
+          >
+            <template #append>
+              <el-button @click="handleCopyLink">
+                复制链接
+              </el-button>
+            </template>
+          </el-input>
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="resetDialogVisible = false">关闭</el-button>
+          </span>
+        </template>
+      </el-dialog>
 
       <!-- 分页 -->
       <el-pagination
@@ -168,21 +231,26 @@ const handleReset = () => {
   searchForm.username = ''
 }
 
+const resetLink = ref('')
+const resetDialogVisible = ref(false)
+
 const handleResetPassword = async (user: UserInfo) => {
   try {
-    const response = await fetch('/api/admin/reset/password', {
+    const response = await fetch('/api/admin/user/reset/password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        user_id: user.id
+        username: user.username
       })
     })
     
     const data = await response.json()
     if (data.code === 2000 && data.status === 'ok') {
       ElMessage.success('密码重置成功')
+      resetLink.value = data.link
+      resetDialogVisible.value = true
     } else {
       ElMessage.error(data.msg || '密码重置失败')
     }
@@ -220,6 +288,59 @@ const handleChangeRole = async (user: UserInfo) => {
 onMounted(() => {
   fetchAllUsers()
 })
+
+const dialogVisible = ref(false)
+const editForm = reactive({
+  id: 0,
+  username: '',
+  role: 1,
+  status: true
+})
+
+const handleEdit = (row: UserInfo) => {
+  editForm.id = row.id
+  editForm.username = row.username
+  editForm.role = row.role
+  editForm.status = row.status
+  dialogVisible.value = true
+}
+
+const handleSave = async () => {
+  try {
+    const response = await fetch('/api/admin/user/update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_id: editForm.id,
+        role: editForm.role,
+        status: editForm.status
+      })
+    })
+    
+    const data = await response.json()
+    if (data.code === 2000 && data.status === 'ok') {
+      ElMessage.success('更新成功')
+      dialogVisible.value = false
+      // 刷新用户列表
+      fetchAllUsers()
+    } else {
+      ElMessage.error(data.msg || '更新失败')
+    }
+  } catch (error) {
+    ElMessage.error('更新失败')
+  }
+}
+
+const handleCopyLink = async () => {
+  try {
+    await navigator.clipboard.writeText(resetLink.value)
+    ElMessage.success('链接已复制到剪贴板')
+  } catch (error) {
+    ElMessage.error('复制失败')
+  }
+}
 </script>
 
 <style scoped>
@@ -267,5 +388,13 @@ onMounted(() => {
 :deep(.el-pagination .el-pager li.active) {
   background-color: var(--el-color-primary);
   color: #fff;
+}
+
+.reset-link-container {
+  padding: 10px;
+}
+
+.reset-link-input {
+  width: 100%;
 }
 </style>

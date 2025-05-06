@@ -3,10 +3,14 @@ package services
 import (
 	"errors"
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"net/url"
+	"path"
 
+	"gintemplate/app/config"
 	"gintemplate/app/database"
 	"gintemplate/app/global"
 	"gintemplate/app/logger"
@@ -89,7 +93,7 @@ func SearchSingleUserInfo(username string) (sys.SimpleUser, error) {
 	var dbUser db.User
 	err := database.DB.Where("username = ?", username).First(&dbUser).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return sys.SimpleUser{}, nil // 或返回错误，如 fmt.Errorf("用户不存在")
+		return sys.SimpleUser{}, nil
 	}
 	if err != nil {
 		logger.LogRus.Error(err)
@@ -106,4 +110,25 @@ func SearchSingleUserInfo(username string) (sys.SimpleUser, error) {
 		Status:        dbUser.Status,
 	}
 	return simpleUser, nil
+}
+
+func CreatePasswordResetLink(u string) (string, int, error) {
+	var user db.User
+	if err := database.DB.Where("username = ?", u).First(&user).Error; err != nil {
+		return "", global.CodeInformationNotFound, fmt.Errorf(global.CodeInformationNotFoundMsg)
+	}
+	resetKey := utils.GenerateUUIDv7()
+	if err := database.DB.Model(&user).Update("password", resetKey).Error; err != nil {
+		return "", global.CodeDatabaseUpdateError, fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
+	}
+	baseUrl := config.ConfigInfo.Server.BaseUrl
+	base, _ := url.Parse(baseUrl)
+	base.Path = path.Join(base.Path, "/password-reset")
+	query := url.Values{}
+	query.Set("username", u)
+	query.Set("reset_key", resetKey)
+	base.RawQuery = query.Encode()
+
+	l := base.String()
+	return l, global.CodeSuccess, nil
 }

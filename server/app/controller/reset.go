@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	
+
 	"gintemplate/app/global"
 	"gintemplate/app/models/req"
 	"gintemplate/app/models/resp"
@@ -51,7 +51,7 @@ func InviteUserCheck(c *gin.Context) {
 		})
 		return
 	}
-	code, err := services.InviteUserRegister(inviteCheck.Username, inviteCheck.Password, inviteCheck.InviteKey)
+	code, err := services.UserPasswordReset(inviteCheck.Username, inviteCheck.Password, inviteCheck.InviteKey)
 	if err != nil {
 		c.JSON(http.StatusOK, resp.InviteCheckResp{
 			Code:   code,
@@ -61,6 +61,33 @@ func InviteUserCheck(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, resp.InviteCheckResp{
+		Code:   global.CodeSuccess,
+		Msg:    global.CodeSuccessMsg,
+		Status: "ok",
+	})
+	return
+}
+
+func ResetUserCheck(c *gin.Context) {
+	var resetCheck req.ResetPasswordCheckReq
+	if err := c.ShouldBindJSON(&resetCheck); err != nil {
+		c.JSON(http.StatusBadRequest, resp.InviteCheckResp{
+			Code:   global.CodeParameterMissing,
+			Msg:    global.CodeParameterMissingMsg,
+			Status: "error",
+		})
+		return
+	}
+	code, err := services.UserPasswordReset(resetCheck.Username, resetCheck.Password, resetCheck.ResetKey)
+	if err != nil {
+		c.JSON(http.StatusOK, resp.ResetCheckResp{
+			Code:   code,
+			Msg:    err.Error(),
+			Status: "error",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, resp.ResetCheckResp{
 		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Status: "ok",

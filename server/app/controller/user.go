@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"gintemplate/app/models/sys"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +8,7 @@ import (
 	"gintemplate/app/global"
 	"gintemplate/app/models/req"
 	"gintemplate/app/models/resp"
+	"gintemplate/app/models/sys"
 	"gintemplate/app/services"
 )
 
@@ -187,6 +187,36 @@ func SearchUserInfo(c *gin.Context) {
 		Msg:    global.CodeSuccessMsg,
 		Status: "ok",
 		User:   user,
+	})
+	return
+}
+
+func ResetPassword(c *gin.Context) {
+	var ur req.ResetPasswordReq
+	if err := c.ShouldBindJSON(&ur); err != nil {
+		c.JSON(http.StatusBadRequest, resp.ResetPasswordResp{
+			Code:   global.CodeParameterIllegal,
+			Msg:    global.CodeParameterIllegalMsg,
+			Link:   "",
+			Status: "error",
+		})
+		return
+	}
+	l, code, err := services.CreatePasswordResetLink(ur.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, resp.ResetPasswordResp{
+			Code:   code,
+			Msg:    err.Error(),
+			Link:   "",
+			Status: "error",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, resp.ResetPasswordResp{
+		Code:   global.CodeSuccess,
+		Msg:    global.CodeSuccessMsg,
+		Link:   l,
+		Status: "ok",
 	})
 	return
 }

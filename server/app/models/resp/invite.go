@@ -12,3 +12,9 @@ type InviteCheckResp struct {
 	Msg    string `json:"msg"`
 	Status string `json:"status"`
 }
+
+type ResetCheckResp struct {
+	Code   int    `json:"code"`
+	Msg    string `json:"msg"`
+	Status string `json:"status"`
+}

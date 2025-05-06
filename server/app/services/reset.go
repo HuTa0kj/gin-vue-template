@@ -12,6 +12,24 @@ import (
 	"gintemplate/app/utils"
 )
 
+func UserPasswordReset(u string, p string, k string) (int, error) {
+	// Invite key is tmp password
+	var user db.User
+	result := database.DB.Where("username = ? AND password = ?", u, k).First(&user)
+
+	if result.Error != nil {
+		return global.CodeInviteCodeInvalid, fmt.Errorf(global.CodeInviteCodeInvalidMsg)
+	}
+
+	hashPwd, _ := utils.HashAndStorePassword(p)
+
+	if err := database.DB.Model(&user).Update("password", hashPwd).Error; err != nil {
+		return global.CodeDatabaseUpdateError, fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
+	}
+
+	return global.CodeSuccess, nil
+}
+
 func CreateInviteLink(u string, r int) (string, int, error) {
 	var existingUser db.User
 	if err := database.DB.Where("username = ?", u).First(&existingUser).Error; err == nil {
@@ -47,22 +65,4 @@ func CreateInviteLink(u string, r int) (string, int, error) {
 
 	l := base.String()
 	return l, global.CodeSuccess, nil
-}
-
-func InviteUserRegister(u string, p string, k string) (int, error) {
-	// Invite key is tmp password
-	var user db.User
-	result := database.DB.Where("username = ? AND password = ?", u, k).First(&user)
-
-	if result.Error != nil {
-		return global.CodeInviteCodeInvalid, fmt.Errorf(global.CodeInviteCodeInvalidMsg)
-	}
-
-	hashPwd, _ := utils.HashAndStorePassword(p)
-
-	if err := database.DB.Model(&user).Update("password", hashPwd).Error; err != nil {
-		return global.CodeDatabaseUpdateError, fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
-	}
-
-	return global.CodeSuccess, nil
 }

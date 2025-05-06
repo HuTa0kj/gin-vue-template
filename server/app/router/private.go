@@ -28,7 +28,7 @@ func PrivateRouteGroup(c *gin.Engine) {
 		adminGroup.POST("/user/invite", controller.InviteUser)
 		adminGroup.GET("/user/all", controller.GetAllUserInfo)
 		adminGroup.POST("/user/search", controller.SearchUserInfo)
-		adminGroup.POST("/user/reset/password")
+		adminGroup.POST("/user/reset/password", controller.ResetPassword)
 
 	}
 

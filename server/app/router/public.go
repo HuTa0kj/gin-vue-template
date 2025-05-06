@@ -16,5 +16,6 @@ func PublicRouteGroup(c *gin.Engine) {
 	}
 
 	publicGroup.POST("/user/invite/check", controller.InviteUserCheck)
+	publicGroup.POST("/user/reset/check", controller.ResetUserCheck)
 
 }

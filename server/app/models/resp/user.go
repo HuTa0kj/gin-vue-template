@@ -33,3 +33,10 @@ type SingleUserResp struct {
 	User   sys.SimpleUser `json:"users"`
 	Status string         `json:"status"`
 }
+
+type ResetPasswordResp struct {
+	Code   int    `json:"code"`
+	Msg    string `json:"msg"`
+	Link   string `json:"link"`
+	Status string `json:"status"`
+}
