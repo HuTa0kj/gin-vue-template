@@ -40,3 +40,9 @@ type ResetPasswordResp struct {
 	Link   string `json:"link"`
 	Status string `json:"status"`
 }
+
+type UpdateUserInfoResp struct {
+	Code   int    `json:"code"`
+	Msg    string `json:"msg"`
+	Status string `json:"status"`
+}

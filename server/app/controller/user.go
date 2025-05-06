@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"gintemplate/app/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -216,6 +217,35 @@ func ResetPassword(c *gin.Context) {
 		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Link:   l,
+		Status: "ok",
+	})
+	return
+}
+
+func UpdateUserInfo(c *gin.Context) {
+	var uq req.UpdateUserInfoReq
+	if err := c.ShouldBindJSON(&uq); err != nil {
+		c.JSON(http.StatusBadRequest, resp.UpdateUserInfoResp{
+			Code:   global.CodeParameterIllegal,
+			Msg:    global.CodeParameterIllegalMsg,
+			Status: "error",
+		})
+		logger.LogRus.Error(err)
+		return
+	}
+	code, err := services.ModifyUserInfo(uq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, resp.UpdateUserInfoResp{
+			Code:   code,
+			Msg:    err.Error(),
+			Status: "error",
+		})
+		logger.LogRus.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, resp.UpdateUserInfoResp{
+		Code:   global.CodeSuccess,
+		Msg:    global.CodeSuccessMsg,
 		Status: "ok",
 	})
 	return

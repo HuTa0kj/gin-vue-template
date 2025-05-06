@@ -19,7 +19,7 @@ func PrivateRouteGroup(c *gin.Engine) {
 	{
 		userGroup.GET("token", controller.GetUserToken)
 		userGroup.GET("info", controller.GetUserInfoFromCookie)
-		userGroup.POST("/password/update", controller.UpdatePassword)
+		userGroup.PATCH("/password/update", controller.UpdatePassword)
 	}
 
 	adminGroup := privateGroup.Group("admin")
@@ -28,7 +28,8 @@ func PrivateRouteGroup(c *gin.Engine) {
 		adminGroup.POST("/user/invite", controller.InviteUser)
 		adminGroup.GET("/user/all", controller.GetAllUserInfo)
 		adminGroup.POST("/user/search", controller.SearchUserInfo)
-		adminGroup.POST("/user/reset/password", controller.ResetPassword)
+		adminGroup.PATCH("/user/reset/password", controller.ResetPassword)
+		adminGroup.PATCH("/user/update", controller.UpdateUserInfo)
 
 	}
 

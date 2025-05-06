@@ -164,7 +164,7 @@ const submitPasswordUpdate = async () => {
     if (valid) {
       try {
         const response = await fetch('/api/user/password/update', {
-          method: 'POST',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json'
           },

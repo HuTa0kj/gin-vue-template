@@ -15,9 +15,15 @@ func (r *AllUserReq) SetDefaults() {
 }
 
 type UserSearchReq struct {
-	Username string `json:"username"`
+	Username string `json:"username" binding:"required"`
 }
 
 type ResetPasswordReq struct {
-	Username string `json:"username"`
+	Username string `json:"username" binding:"required"`
+}
+
+type UpdateUserInfoReq struct {
+	ID     int  `json:"user_id" binding:"required"`
+	Role   int  `json:"role" binding:"required"`
+	Status bool `json:"status"`
 }

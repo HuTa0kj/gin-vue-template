@@ -15,6 +15,7 @@ import (
 	"gintemplate/app/global"
 	"gintemplate/app/logger"
 	"gintemplate/app/models/db"
+	"gintemplate/app/models/req"
 	"gintemplate/app/models/sys"
 	"gintemplate/app/utils"
 )
@@ -131,4 +132,19 @@ func CreatePasswordResetLink(u string) (string, int, error) {
 
 	l := base.String()
 	return l, global.CodeSuccess, nil
+}
+
+func ModifyUserInfo(u req.UpdateUserInfoReq) (int, error) {
+	if u.Role > 10 || u.Role < 1 {
+		return global.CodeParameterIllegal, fmt.Errorf(global.CodeParameterIllegalMsg)
+	}
+	updates := map[string]interface{}{
+		"role":   u.Role,
+		"status": u.Status,
+	}
+	result := database.DB.Model(&db.User{}).Where("id = ?", u.ID).Updates(updates)
+	if result.Error != nil {
+		return global.CodeDatabaseUpdateError, fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
+	}
+	return global.CodeSuccess, nil
 }

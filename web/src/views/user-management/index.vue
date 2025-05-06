@@ -237,7 +237,7 @@ const resetDialogVisible = ref(false)
 const handleResetPassword = async (user: UserInfo) => {
   try {
     const response = await fetch('/api/admin/user/reset/password', {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -256,32 +256,6 @@ const handleResetPassword = async (user: UserInfo) => {
     }
   } catch (error) {
     ElMessage.error('密码重置失败')
-  }
-}
-
-const handleChangeRole = async (user: UserInfo) => {
-  try {
-    const response = await fetch('/api/user/change-role', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        user_id: user.id,
-        new_role: user.role === 100 ? 10 : 100
-      })
-    })
-    
-    const data = await response.json()
-    if (data.code === 2000 && data.status === 'ok') {
-      ElMessage.success('权限修改成功')
-      // 刷新用户列表
-      handleSearch()
-    } else {
-      ElMessage.error(data.msg || '权限修改失败')
-    }
-  } catch (error) {
-    ElMessage.error('权限修改失败')
   }
 }
 
@@ -308,7 +282,7 @@ const handleEdit = (row: UserInfo) => {
 const handleSave = async () => {
   try {
     const response = await fetch('/api/admin/user/update', {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
