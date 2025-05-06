@@ -1,7 +1,6 @@
 package normal
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -45,7 +44,6 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 	userID, iok := claims["id"].(float64)
 	userRole, rok := claims["role"].(float64)
 	userStatus, _ := claims["status"].(bool)
-	fmt.Println(userName, userID, userRole)
 	if !uok || !rok || !iok {
 		c.JSON(
 			http.StatusUnauthorized,
