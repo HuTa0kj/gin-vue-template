@@ -34,7 +34,7 @@ func (w *responseWriter) WriteString(s string) (int, error) {
 func CacheMiddleware(expireTime time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 只缓存GET请求，非幂等不缓存
-		if c.Request.Method != http.MethodGet || strings.Contains(c.Request.URL.Path, "no-cache") {
+		if c.Request.Method != http.MethodGet {
 			c.Next()
 			return
 		}
