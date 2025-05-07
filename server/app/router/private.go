@@ -5,12 +5,12 @@ import (
 
 	"gintemplate/app/controller"
 	"gintemplate/app/global"
-	"gintemplate/app/middlewares/normal"
+	"gintemplate/app/middlewares"
 )
 
 func PrivateRouteGroup(c *gin.Engine) {
 	privateGroup := c.Group(global.RoutePrefix)
-	privateGroup.Use(normal.UserAuth())
+	privateGroup.Use(middlewares.UserAuth())
 
 	privateGroup.GET("/login/status", controller.CheckLoginStatus)
 	privateGroup.GET("/logout", controller.Logout)
@@ -23,7 +23,7 @@ func PrivateRouteGroup(c *gin.Engine) {
 	}
 
 	adminGroup := privateGroup.Group("admin")
-	adminGroup.Use(normal.AdminAuth())
+	adminGroup.Use(middlewares.AdminAuth())
 	{
 		adminGroup.POST("/user/invite", controller.InviteUser)
 		adminGroup.GET("/user/all", controller.GetAllUserInfo)
@@ -34,6 +34,6 @@ func PrivateRouteGroup(c *gin.Engine) {
 	}
 
 	rootGroup := privateGroup.Group("root")
-	rootGroup.Use(normal.RootAuth())
+	rootGroup.Use(middlewares.RootAuth())
 
 }

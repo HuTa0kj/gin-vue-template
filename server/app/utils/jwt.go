@@ -2,9 +2,11 @@ package utils
 
 import (
 	"fmt"
-	"gintemplate/app/global"
-	"github.com/dgrijalva/jwt-go"
 	"time"
+	
+	"github.com/dgrijalva/jwt-go"
+
+	"gintemplate/app/global"
 )
 
 func GenerateJWT(username string, userId int, userRole int, userStatus bool) (string, error) {

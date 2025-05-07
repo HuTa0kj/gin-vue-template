@@ -1,16 +1,16 @@
 package router
 
 import (
-	"gintemplate/app/controller"
 	"github.com/gin-gonic/gin"
 
+	"gintemplate/app/controller"
 	"gintemplate/app/global"
-	"gintemplate/app/middlewares/normal"
+	"gintemplate/app/middlewares"
 )
 
 func ApiRouteGroup(c *gin.Engine) {
 	apiGroup := c.Group(global.RoutePrefix)
-	apiGroup.Use(normal.UserKeyAuth())
+	apiGroup.Use(middlewares.UserKeyAuth())
 	apiGroupV1 := apiGroup.Group("v1")
 
 	userGroup := apiGroupV1.Group("user")

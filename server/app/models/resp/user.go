@@ -27,13 +27,6 @@ type AllUserResp struct {
 	Total  int64            `json:"total"`
 }
 
-type SingleUserResp struct {
-	Code   int            `json:"code"`
-	Msg    string         `json:"msg"`
-	User   sys.SimpleUser `json:"users"`
-	Status string         `json:"status"`
-}
-
 type ResetPasswordResp struct {
 	Code   int    `json:"code"`
 	Msg    string `json:"msg"`

@@ -2,12 +2,13 @@ package utils
 
 import (
 	"crypto/rand"
-	"golang.org/x/crypto/bcrypt"
 	"math/big"
 	"os"
 	"path/filepath"
 	"strings"
 	"unicode"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/google/uuid"
 )
@@ -24,14 +25,11 @@ func SnakeCase(input string) string {
 	var result []rune
 	for i, r := range input {
 		if unicode.IsUpper(r) {
-			// 如果不是第一个字符，添加下划线
 			if i > 0 {
 				result = append(result, '_')
 			}
-			// 将大写字母转换为小写
 			result = append(result, unicode.ToLower(r))
 		} else {
-			// 如果是小写字母或其他字符，直接添加
 			result = append(result, r)
 		}
 	}

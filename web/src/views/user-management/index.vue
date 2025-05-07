@@ -191,22 +191,21 @@ const handleSearch = async () => {
     
     const data = await response.json()
     if (data.code === 2000 && data.status === 'ok') {
-      const userData = data.users
-      if (!userData.status) {
+      if (Array.isArray(data.users) && data.users.length > 0) {
+        // 处理用户数组
+        userList.value = data.users.map(user => ({
+          id: user.id,
+          username: user.username,
+          role: Number(user.role),
+          createTime: user.register_time,
+          lastLoginTime: user.last_login_time,
+          status: user.status
+        }))
+        total.value = data.total || data.users.length
+      } else {
         // 未查询到数据，显示空表格
         userList.value = []
         total.value = 0
-      } else {
-        // 查询到数据，显示用户信息
-        userList.value = [{
-          id: userData.id,
-          username: userData.username,
-          role: Number(userData.role),
-          createTime: userData.register_time,
-          lastLoginTime: userData.last_login_time,
-          status: userData.status
-        }]
-        total.value = 1
       }
     } else {
       ElMessage.error(data.msg || '查询失败')

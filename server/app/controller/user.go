@@ -169,31 +169,31 @@ func GetAllUserInfo(c *gin.Context) {
 func SearchUserInfo(c *gin.Context) {
 	var ur req.UserSearchReq
 	if err := c.ShouldBindJSON(&ur); err != nil {
-		c.JSON(http.StatusBadRequest, resp.SingleUserResp{
+		c.JSON(http.StatusBadRequest, resp.AllUserResp{
 			Code:   global.CodeParameterIllegal,
 			Msg:    global.CodeParameterIllegalMsg,
 			Status: "error",
-			User:   sys.SimpleUser{},
+			Users:  []sys.SimpleUser{},
 		})
 		logger.LogRus.Error(err)
 		return
 	}
-	user, err := services.SearchSingleUserInfo(ur.Username)
+	users, err := services.SearchKeywordUserInfo(ur.Username)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, resp.SingleUserResp{
+		c.JSON(http.StatusInternalServerError, resp.AllUserResp{
 			Code:   global.CodeDatabaseSelectError,
 			Msg:    global.CodeDatabaseSelectErrorMsg,
 			Status: "error",
-			User:   user,
+			Users:  users,
 		})
 		logger.LogRus.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, resp.SingleUserResp{
+	c.JSON(http.StatusOK, resp.AllUserResp{
 		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Status: "ok",
-		User:   user,
+		Users:  users,
 	})
 	return
 }

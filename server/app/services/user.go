@@ -1,12 +1,10 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 	"net/url"
 	"path"
 
@@ -90,27 +88,40 @@ func SelectAllUserInfo(page, pageSize int) ([]sys.SimpleUser, int64, error) {
 
 	return users, total, nil
 }
-func SearchSingleUserInfo(username string) (sys.SimpleUser, error) {
-	var dbUser db.User
-	err := database.DB.Where("username = ?", username).First(&dbUser).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return sys.SimpleUser{}, nil
-	}
-	if err != nil {
-		logger.LogRus.Error(err)
-		return sys.SimpleUser{}, err
+
+func SearchKeywordUserInfo(username string) ([]sys.SimpleUser, error) {
+	var dbUsers []db.User
+	if len(username) < 2 {
+		return nil, fmt.Errorf("username too short")
 	}
 
-	// db.User → sys.SimpleUser
-	simpleUser := sys.SimpleUser{
-		ID:            uint(dbUser.ID),
-		Username:      dbUser.UserName,
-		Role:          dbUser.Role,
-		RegisterTime:  dbUser.RegisterTime,
-		LastLoginTime: dbUser.LastLoginTime,
-		Status:        dbUser.Status,
+	err := database.DB.
+		Where("username LIKE ?", "%"+username+"%").
+		Find(&dbUsers).
+		Error
+
+	if err != nil {
+		logger.LogRus.Error(err)
+		return nil, err
 	}
-	return simpleUser, nil
+
+	if len(dbUsers) == 0 {
+		return []sys.SimpleUser{}, nil
+	}
+
+	var simpleUsers []sys.SimpleUser
+	for _, dbUser := range dbUsers {
+		simpleUsers = append(simpleUsers, sys.SimpleUser{
+			ID:            uint(dbUser.ID),
+			Username:      dbUser.UserName,
+			Role:          dbUser.Role,
+			RegisterTime:  dbUser.RegisterTime,
+			LastLoginTime: dbUser.LastLoginTime,
+			Status:        dbUser.Status,
+		})
+	}
+
+	return simpleUsers, nil
 }
 
 func CreatePasswordResetLink(u string) (string, int, error) {
