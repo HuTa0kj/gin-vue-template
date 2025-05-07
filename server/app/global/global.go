@@ -1,8 +1,9 @@
 package global
 
 import (
-	"gintemplate/app/config"
 	"time"
+
+	"gintemplate/app/config"
 )
 
 var JwtKey []byte

@@ -106,7 +106,7 @@ func RootAuth() gin.HandlerFunc {
 func apiKeyAuthHelper(c *gin.Context, minRole int) {
 	tokenString := c.Request.Header.Get("Authorization")
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-	r, ok := services.ResolveUserKey(tokenString)
+	u, ok := services.ResolveUserKey(tokenString)
 	if !ok {
 		c.JSON(
 			http.StatusUnauthorized,
@@ -118,7 +118,7 @@ func apiKeyAuthHelper(c *gin.Context, minRole int) {
 		c.Abort()
 		return
 	}
-	if r < minRole {
+	if u.Role < minRole {
 		c.JSON(http.StatusUnauthorized, resp.AuthResp{
 			Code:   global.CodeUnauthorized,
 			Msg:    global.CodeUnauthorizedMsg,
@@ -127,7 +127,7 @@ func apiKeyAuthHelper(c *gin.Context, minRole int) {
 		c.Abort()
 		return
 	}
-	c.Set("api_key", tokenString)
+	c.Set("user_id", u.ID)
 	c.Next()
 }
 

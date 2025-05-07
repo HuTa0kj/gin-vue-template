@@ -1,6 +1,8 @@
 package router
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 
 	"gintemplate/app/controller"
@@ -26,7 +28,7 @@ func PrivateRouteGroup(c *gin.Engine) {
 	adminGroup.Use(middlewares.AdminAuth())
 	{
 		adminGroup.POST("/user/invite", controller.InviteUser)
-		adminGroup.GET("/user/all", controller.GetAllUserInfo)
+		adminGroup.GET("/user/all", middlewares.CacheMiddleware(120*time.Second), controller.GetAllUserInfo)
 		adminGroup.POST("/user/search", controller.SearchUserInfo)
 		adminGroup.PATCH("/user/reset/password", controller.ResetPassword)
 		adminGroup.PATCH("/user/update", controller.UpdateUserInfo)

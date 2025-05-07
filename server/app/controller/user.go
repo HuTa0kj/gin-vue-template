@@ -15,7 +15,7 @@ import (
 
 // Get User Info
 func GetUserInfoFromKey(c *gin.Context) {
-	userInfo, ok := services.GetKeyUserInfo(c)
+	userInfo, ok := services.GetCurrentUserInfo(c)
 	if !ok {
 		c.JSON(
 			http.StatusNotFound,

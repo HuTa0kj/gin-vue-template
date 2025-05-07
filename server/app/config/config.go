@@ -18,9 +18,17 @@ type MySQL struct {
 	Database string
 }
 
+type Redis struct {
+	Host     string
+	Port     string
+	Password string
+	DB       int
+}
+
 // Database
 type DB struct {
 	MySQL MySQL
+	Redis Redis
 }
 
 // Auth

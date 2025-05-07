@@ -5,10 +5,7 @@ func InitDatabase() error {
 	if err != nil {
 		return err
 	}
-	
-	err = InitRedis()
-	if err != nil {
-		return err
-	}
+
+	InitRedis()
 	return nil
 }

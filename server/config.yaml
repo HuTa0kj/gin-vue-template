@@ -15,6 +15,11 @@ Db:
     User: root
     Password: root
     Database: app
+  Redis:
+    Host: redis # redis 127.0.0.1
+    Port: 6379
+    Password: ""
+    DB: 0
 Auth:
   JwtKey: jwt_key # JWT 密钥
   EffectiveHours: 2 # JWT 有效时间 2 小时
