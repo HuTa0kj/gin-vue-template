@@ -30,12 +30,18 @@ func PrivateRouteGroup(c *gin.Engine) {
 		adminGroup.POST("/user/invite", controller.InviteUser)
 		adminGroup.GET("/user/all", middlewares.CacheMiddleware(120*time.Second), controller.GetAllUserInfo)
 		adminGroup.POST("/user/search", controller.SearchUserInfo)
-		adminGroup.PATCH("/user/reset/password", controller.ResetPassword)
-		adminGroup.PATCH("/user/update", controller.UpdateUserInfo)
+		adminGroup.PUT("/user/reset/password", controller.ResetPassword)
+		adminGroup.PUT("/user/update", controller.UpdateUserInfo)
 
 	}
 
 	rootGroup := privateGroup.Group("root")
 	rootGroup.Use(middlewares.RootAuth())
+
+	statisticsGroup := privateGroup.Group("statistics")
+	statisticsGroup.Use(middlewares.UserAuth())
+	{
+		statisticsGroup.GET("/cpu", controller.SystemStatisticsCPU)
+	}
 
 }

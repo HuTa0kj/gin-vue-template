@@ -12,28 +12,28 @@ import (
 	"gintemplate/app/utils"
 )
 
-func UserPasswordReset(u string, p string, k string) (int, error) {
+func UserTmpPasswordReset(u string, p string, k string) error {
 	// Invite key is tmp password
 	var user db.User
 	result := database.DB.Where("username = ? AND password = ?", u, k).First(&user)
 
 	if result.Error != nil {
-		return global.CodeInviteCodeInvalid, fmt.Errorf(global.CodeInviteCodeInvalidMsg)
+		return fmt.Errorf(global.CodeInviteCodeInvalidMsg)
 	}
 
 	hashPwd, _ := utils.HashAndStorePassword(p)
 
 	if err := database.DB.Model(&user).Update("password", hashPwd).Error; err != nil {
-		return global.CodeDatabaseUpdateError, fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
+		return fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
 	}
 
-	return global.CodeSuccess, nil
+	return nil
 }
 
-func CreateInviteLink(u string, r int) (string, int, error) {
+func CreateInviteLink(u string, r int) (string, error) {
 	var existingUser db.User
 	if err := database.DB.Where("username = ?", u).First(&existingUser).Error; err == nil {
-		return "", global.CodeDuplicateUsername, fmt.Errorf(global.CodeDuplicateUsernameMsg)
+		return "", fmt.Errorf(global.CodeDuplicateUsernameMsg)
 	}
 
 	// Create tmp invite key
@@ -49,10 +49,10 @@ func CreateInviteLink(u string, r int) (string, int, error) {
 		Status:        true,
 	}
 	if r > 10 || r < 1 {
-		return "", global.CodeInviteRoleError, fmt.Errorf(global.CodeInviteRoleErrorMsg)
+		return "", fmt.Errorf(global.CodeInviteRoleErrorMsg)
 	}
 	if err := database.DB.Create(&newUser).Error; err != nil {
-		return "", global.CodeDatabaseInsertError, fmt.Errorf(global.CodeDatabaseInsertErrorMsg)
+		return "", fmt.Errorf(global.CodeDatabaseInsertErrorMsg)
 	}
 
 	baseUrl := config.ConfigInfo.Server.BaseUrl
@@ -64,5 +64,5 @@ func CreateInviteLink(u string, r int) (string, int, error) {
 	base.RawQuery = query.Encode()
 
 	l := base.String()
-	return l, global.CodeSuccess, nil
+	return l, nil
 }

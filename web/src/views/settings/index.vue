@@ -52,7 +52,7 @@ const fetchSettings = async () => {
   try {
     const response = await fetch('/api/settings/info')
     const data = await response.json()
-    if (data.code === 0) {
+    if (data.status === "ok") {
       const wechatKeySetting = data.data.find(item => item.setting_key === 'wechat_key')
       formData.value.wechat_key = wechatKeySetting ? wechatKeySetting.setting_value : ''
     } else {
@@ -78,7 +78,7 @@ const handleSave = async () => {
           body: JSON.stringify(formData.value)
         })
         const data = await response.json()
-        if (data.code === 0) {
+        if (data.status === "ok") {
           ElMessage.success('保存成功')
         } else {
           ElMessage.error(data.message || '保存失败')

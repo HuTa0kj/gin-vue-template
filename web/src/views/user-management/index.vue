@@ -159,7 +159,7 @@ const fetchAllUsers = async () => {
     const url = `/api/admin/user/all?page=${searchForm.page}&page_size=${searchForm.page_size}`
     const response = await fetch(url)
     const data = await response.json()
-    if (data.code === 2000 && data.status === 'ok') {
+    if (data.status === 'ok') {
       userList.value = data.users.map(user => ({
         id: user.id,
         username: user.username,
@@ -190,7 +190,7 @@ const handleSearch = async () => {
     })
     
     const data = await response.json()
-    if (data.code === 2000 && data.status === 'ok') {
+    if (data.status === 'ok') {
       if (Array.isArray(data.users) && data.users.length > 0) {
         // 处理用户数组
         userList.value = data.users.map(user => ({
@@ -236,7 +236,7 @@ const resetDialogVisible = ref(false)
 const handleResetPassword = async (user: UserInfo) => {
   try {
     const response = await fetch('/api/admin/user/reset/password', {
-      method: 'PATCH',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -246,7 +246,7 @@ const handleResetPassword = async (user: UserInfo) => {
     })
     
     const data = await response.json()
-    if (data.code === 2000 && data.status === 'ok') {
+    if (data.status === 'ok') {
       ElMessage.success('密码重置成功')
       resetLink.value = data.link
       resetDialogVisible.value = true
@@ -281,7 +281,7 @@ const handleEdit = (row: UserInfo) => {
 const handleSave = async () => {
   try {
     const response = await fetch('/api/admin/user/update', {
-      method: 'PATCH',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -293,7 +293,7 @@ const handleSave = async () => {
     })
     
     const data = await response.json()
-    if (data.code === 2000 && data.status === 'ok') {
+    if (data.status === 'ok') {
       ElMessage.success('更新成功')
       dialogVisible.value = false
       // 刷新用户列表

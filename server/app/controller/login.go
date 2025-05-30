@@ -16,7 +16,6 @@ func LoginCheck(c *gin.Context) {
 	var loginJson req.LoginReq
 	if err := c.ShouldBindJSON(&loginJson); err != nil {
 		c.JSON(400, resp.LoginResp{
-			Code:   global.CodeParameterMissing,
 			Msg:    global.CodeParameterMissingMsg,
 			Token:  "",
 			Status: "error",
@@ -29,7 +28,6 @@ func LoginCheck(c *gin.Context) {
 	if err != nil {
 		logger.LogRus.Warning(err)
 		c.JSON(http.StatusUnauthorized, resp.LoginResp{
-			Code:   global.CodeLoginFail,
 			Msg:    err.Error(),
 			Token:  "",
 			Status: "error",
@@ -40,7 +38,6 @@ func LoginCheck(c *gin.Context) {
 	logger.LogRus.Infof("用户 %s 登录成功", loginJson.Username)
 	c.SetCookie("token", token, 3600, "/", "", false, true)
 	c.JSON(http.StatusOK, resp.LoginResp{
-		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Token:  token,
 		Status: "ok",
@@ -56,7 +53,6 @@ func CheckLoginStatus(c *gin.Context) {
 		c.JSON(
 			http.StatusUnauthorized,
 			resp.LoginStatusResp{
-				Code:   global.CodeUnauthorized,
 				Msg:    global.CodeUnauthorizedMsg,
 				Status: "error",
 			})
@@ -65,7 +61,6 @@ func CheckLoginStatus(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		resp.LoginStatusResp{
-			Code:   global.CodeSuccess,
 			Msg:    global.CodeSuccessMsg,
 			Status: "ok",
 			Auth:   true,

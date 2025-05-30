@@ -19,7 +19,6 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 		c.JSON(
 			http.StatusUnauthorized,
 			resp.AuthResp{
-				Code:   global.CodeUnauthorized,
 				Msg:    global.CodeUnauthorizedMsg,
 				Status: "error",
 			})
@@ -27,12 +26,11 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 		return
 	}
 
-	claims, code, m, err := utils.CheckJWT(tokenString)
+	claims, m, err := utils.CheckJWT(tokenString)
 	if err != nil {
 		c.JSON(
 			http.StatusUnauthorized,
 			resp.AuthResp{
-				Code:   code,
 				Msg:    m,
 				Status: "error",
 			})
@@ -48,7 +46,6 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 		c.JSON(
 			http.StatusUnauthorized,
 			resp.AuthResp{
-				Code:   global.CodeTokenParsingFailed,
 				Msg:    global.CodeTokenParsingFailedMsg,
 				Status: "error",
 			})
@@ -61,7 +58,6 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 
 	if intUserRole < minRole {
 		c.JSON(http.StatusUnauthorized, resp.AuthResp{
-			Code:   global.CodeUnauthorized,
 			Msg:    global.CodeUnauthorizedMsg,
 			Status: "error",
 		})
@@ -70,7 +66,6 @@ func baseAuthHelper(c *gin.Context, minRole int) {
 	}
 	if !userStatus {
 		c.JSON(http.StatusUnauthorized, resp.AuthResp{
-			Code:   global.CodeUserDisable,
 			Msg:    global.CodeUserDisableMsg,
 			Status: "error",
 		})
@@ -111,7 +106,6 @@ func apiKeyAuthHelper(c *gin.Context, minRole int) {
 		c.JSON(
 			http.StatusUnauthorized,
 			resp.AuthResp{
-				Code:   global.CodeUnauthorized,
 				Msg:    global.CodeUnauthorizedMsg,
 				Status: "error",
 			})
@@ -120,7 +114,6 @@ func apiKeyAuthHelper(c *gin.Context, minRole int) {
 	}
 	if u.Role < minRole {
 		c.JSON(http.StatusUnauthorized, resp.AuthResp{
-			Code:   global.CodeUnauthorized,
 			Msg:    global.CodeUnauthorizedMsg,
 			Status: "error",
 		})

@@ -92,7 +92,7 @@ const handleGenerate = async () => {
           body: JSON.stringify(formData.value)
         })
         const data = await response.json()
-        if (data.code === 2000 && data.status === 'ok') {
+        if (data.status === 'ok') {
           inviteLink.value = data.link
           ElMessage.success(data.msg || '邀请链接生成成功')
         } else {

@@ -44,7 +44,7 @@ const fetchToken = async () => {
     const response = await fetch('/api/user/token')
     if (response.ok) {
       const data = await response.json()  
-      if (data.code === 2000 && data.status === "ok") {
+      if (data.status === "ok") {
         token.value = data.token
         username.value = data.username
       } else {

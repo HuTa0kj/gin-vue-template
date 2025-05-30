@@ -88,7 +88,7 @@ const handleSubmit = async () => {
           },
           withCredentials: true
         })
-        if (response.data.code === 2000 && response.data.token.length > 0) {
+        if (response.data.status === "ok" && response.data.token.length > 0) {
           await authStore.setAuthenticated(true)
           try {
             await router.push('/dashboard')

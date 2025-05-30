@@ -16,7 +16,6 @@ func InviteUser(c *gin.Context) {
 	var inviteReq req.InviteUserReq
 	if err := c.ShouldBindJSON(&inviteReq); err != nil {
 		c.JSON(http.StatusBadRequest, resp.InviteUserResp{
-			Code:   global.CodeParameterMissing,
 			Msg:    global.CodeParameterMissingMsg,
 			Link:   "",
 			Status: "error",
@@ -24,10 +23,9 @@ func InviteUser(c *gin.Context) {
 		logger.LogRus.Error(err)
 		return
 	}
-	l, code, err := services.CreateInviteLink(inviteReq.Username, inviteReq.Role)
+	l, err := services.CreateInviteLink(inviteReq.Username, inviteReq.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, resp.InviteUserResp{
-			Code:   code,
 			Msg:    err.Error(),
 			Status: "error",
 			Link:   "",
@@ -36,7 +34,6 @@ func InviteUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, resp.InviteUserResp{
-		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Status: "ok",
 		Link:   l,
@@ -48,17 +45,15 @@ func InviteUserCheck(c *gin.Context) {
 	var inviteCheck req.InviteUserRegisterReq
 	if err := c.ShouldBindJSON(&inviteCheck); err != nil {
 		c.JSON(http.StatusBadRequest, resp.InviteCheckResp{
-			Code:   global.CodeParameterMissing,
 			Msg:    global.CodeParameterMissingMsg,
 			Status: "error",
 		})
 		logger.LogRus.Error(err)
 		return
 	}
-	code, err := services.UserPasswordReset(inviteCheck.Username, inviteCheck.Password, inviteCheck.InviteKey)
+	err := services.UserTmpPasswordReset(inviteCheck.Username, inviteCheck.Password, inviteCheck.InviteKey)
 	if err != nil {
-		c.JSON(http.StatusOK, resp.InviteCheckResp{
-			Code:   code,
+		c.JSON(http.StatusBadRequest, resp.InviteCheckResp{
 			Msg:    err.Error(),
 			Status: "error",
 		})
@@ -66,7 +61,6 @@ func InviteUserCheck(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, resp.InviteCheckResp{
-		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Status: "ok",
 	})
@@ -77,17 +71,15 @@ func ResetUserCheck(c *gin.Context) {
 	var resetCheck req.ResetPasswordCheckReq
 	if err := c.ShouldBindJSON(&resetCheck); err != nil {
 		c.JSON(http.StatusBadRequest, resp.InviteCheckResp{
-			Code:   global.CodeParameterMissing,
 			Msg:    global.CodeParameterMissingMsg,
 			Status: "error",
 		})
 		logger.LogRus.Error(err)
 		return
 	}
-	code, err := services.UserPasswordReset(resetCheck.Username, resetCheck.Password, resetCheck.ResetKey)
+	err := services.UserTmpPasswordReset(resetCheck.Username, resetCheck.Password, resetCheck.ResetKey)
 	if err != nil {
 		c.JSON(http.StatusOK, resp.ResetCheckResp{
-			Code:   code,
 			Msg:    err.Error(),
 			Status: "error",
 		})
@@ -95,7 +87,6 @@ func ResetUserCheck(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, resp.ResetCheckResp{
-		Code:   global.CodeSuccess,
 		Msg:    global.CodeSuccessMsg,
 		Status: "ok",
 	})

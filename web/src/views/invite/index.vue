@@ -111,7 +111,7 @@ const handleSubmit = async () => {
       password: form.password
     })
 
-    if (checkResponse.data.code === 2000 && checkResponse.data.status === 'ok') {
+    if (checkResponse.data.status === 'ok') {
       ElMessage.success('密码设置成功')
       router.push('/login')
     } else {

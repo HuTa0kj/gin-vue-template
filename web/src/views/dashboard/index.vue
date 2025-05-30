@@ -89,7 +89,7 @@
                   </div>
                 </template>
                 <div class="card-value">正常</div>
-                <div class="card-footer">CPU使用率: 32%</div>
+                <div class="card-footer">CPU使用率: {{ cpuUsage }}</div>
               </el-card>
             </el-col>
             <el-col :span="6">
@@ -100,8 +100,8 @@
                     <span>运行时间</span>
                   </div>
                 </template>
-                <div class="card-value">20天</div>
-                <div class="card-footer">上次重启: 2025-03-05</div>
+                <div class="card-value">{{ uptimeDays }}天</div>
+                <div class="card-footer">上次重启: {{ lastBoot }}</div>
               </el-card>
             </el-col>
           </el-row>
@@ -142,6 +142,29 @@ const todayLogs = ref(0)
 const unverifiedVuls = ref(0)
 const pendingVuls = ref(0)
 
+// 添加系统状态相关的响应式变量
+const cpuUsage = ref('0%')
+const uptimeDays = ref(0)
+const lastBoot = ref('')
+
+// 获取系统状态信息
+const fetchSystemStats = async () => {
+  try {
+    const response = await axios.get('/api/statistics/cpu')
+    const data = response.data
+    if (data.status === 'ok') {
+      cpuUsage.value = data.cpu_usage
+      uptimeDays.value = data.uptime_days
+      lastBoot.value = data.last_boot
+    }
+  } catch (error) {
+    console.error('获取系统状态信息失败:', error)
+  }
+}
+
+onMounted(() => {
+  fetchSystemStats()
+})
 
 const handleCommand = async (command: string) => {
   if (command === 'logout') {

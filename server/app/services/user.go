@@ -110,14 +110,14 @@ func SearchKeywordUserInfo(username string) ([]sys.SimpleUser, error) {
 	return simpleUsers, nil
 }
 
-func CreatePasswordResetLink(u string) (string, int, error) {
+func CreatePasswordResetLink(u string) (string, error) {
 	var user db.User
 	if err := database.DB.Where("username = ?", u).First(&user).Error; err != nil {
-		return "", global.CodeInformationNotFound, fmt.Errorf(global.CodeInformationNotFoundMsg)
+		return "", fmt.Errorf(global.CodeInformationNotFoundMsg)
 	}
 	resetKey := utils.GenerateUUIDv7()
 	if err := database.DB.Model(&user).Update("password", resetKey).Error; err != nil {
-		return "", global.CodeDatabaseUpdateError, fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
+		return "", fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
 	}
 	baseUrl := config.ConfigInfo.Server.BaseUrl
 	base, _ := url.Parse(baseUrl)
@@ -128,12 +128,12 @@ func CreatePasswordResetLink(u string) (string, int, error) {
 	base.RawQuery = query.Encode()
 
 	l := base.String()
-	return l, global.CodeSuccess, nil
+	return l, nil
 }
 
-func ModifyUserInfo(u req.UpdateUserInfoReq) (int, error) {
+func ModifyUserInfo(u req.UpdateUserInfoReq) error {
 	if u.Role > 10 || u.Role < 1 {
-		return global.CodeParameterIllegal, fmt.Errorf(global.CodeParameterIllegalMsg)
+		return fmt.Errorf(global.CodeParameterIllegalMsg)
 	}
 	updates := map[string]interface{}{
 		"role":   u.Role,
@@ -141,7 +141,7 @@ func ModifyUserInfo(u req.UpdateUserInfoReq) (int, error) {
 	}
 	result := database.DB.Model(&db.User{}).Where("id = ?", u.ID).Updates(updates)
 	if result.Error != nil {
-		return global.CodeDatabaseUpdateError, fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
+		return fmt.Errorf(global.CodeDatabaseUpdateErrorMsg)
 	}
-	return global.CodeSuccess, nil
+	return nil
 }

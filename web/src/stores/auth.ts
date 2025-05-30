@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
             withCredentials: true
           })
           this.isAuthenticated = response.data.auth === true
-          if (response.data.code === 2000 && response.data.status === "ok") {
+          if (response.data.status === "ok") {
             this.userRole = response.data.role
           }
         } catch (error) {
@@ -35,7 +35,7 @@ export const useAuthStore = defineStore('auth', {
           withCredentials: true
         })
         this.isAuthenticated = response.data.auth === true
-        if (response.data.code === 2000 && response.data.status === "ok") {
+        if (response.data.status === "ok") {
           this.userRole = response.data.role
         }
         return this.isAuthenticated

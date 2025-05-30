@@ -141,9 +141,11 @@ const fetchUserInfo = async () => {
     const response = await fetch('/api/user/info')
     if (response.ok) {
       const data = await response.json()
-      if (data.code === 2000 && data.status === 'ok') {
+      if (data.status === 'ok') {
         userInfo.username = data.username
         userInfo.role = data.role
+        userInfo.createTime = data.register_time
+        userInfo.lastLoginTime = data.last_login_time
       } else {
         ElMessage.error(data.msg || '获取用户信息失败')
       }
@@ -175,7 +177,7 @@ const submitPasswordUpdate = async () => {
         })
         
         const data = await response.json()
-        if (data.code === 2000 && data.status === 'ok') {
+        if (data.status === 'ok') {
           ElMessage.success('密码修改成功')
           dialogVisible.value = false
           // 清空表单
